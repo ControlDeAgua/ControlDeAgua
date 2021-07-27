@@ -1,0 +1,10 @@
+/*
+   "ramz.diddi": Setup file for Ramz Editions products
+
+   This file is added when a Ramz Editions project is not based on the folder
+   "C:/Program Files/Ramz Editions". This tells the Diddi's machines that the
+   product it is a real Ramz Editions creation.
+*/
+
+RamzProductName = "Control de Agua";                   !# Product name
+RamzProductDir = "C:/Program Files/Control de Agua";   !# Product direction
