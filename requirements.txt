@@ -1,0 +1,2 @@
+cx_Freeze
+diddiparser>=1.1.1
