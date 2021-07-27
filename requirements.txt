@@ -1,2 +1,2 @@
-cx_Freeze
+cx_Freeze>=6.6
 diddiparser>=1.1.1
