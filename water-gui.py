@@ -135,8 +135,9 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
         setSize(self.root, 489, 280)
         # data variables to prompt
         self.reading = DoubleVar()
-        self.client = StringVar()
+        self.menu_selection = IntVar()
         self.per_unit = ProductMap()
+        self.product_index = list(self.per_unit)
         self.unit_count = DoubleVar()
         # water amount
         entry_l = Label(self.rpage, text="1. Introduzca la lectura del odometro", bg="whitesmoke", fg="black",
@@ -145,10 +146,11 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
         # client prompt
         entry_c = Label(self.rpage, text="2. Producto vendido", bg="whitesmoke", fg="black",
         font=("Calibri", "12", "bold")).grid(row=1, column=0, sticky="ew")
-        self.client, self.product_vars = get_menubutton(self.rpage,
-                                         get_product_dict().keys(),
-                                         row=1,
-                                         column=1)
+        self.client = get_menubutton(self.rpage,
+                                     self.product_index, # use a list shared by all
+                                     self.menu_selection(),
+                                     row=1,
+                                     column=1)
         # unit prompt
         entry_u = Label(self.rpage, text="3. Unidades vendidas", bg="whitesmoke", fg="black",
         font=("Calibri", "12", "bold")).grid(row=3, column=0, sticky="ew")
@@ -162,12 +164,37 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
     def loop(self) -> None:
         "start looping over the Tk root. Use this when the Tk is not available outside the class."
         self.root.mainloop()
+    
+    def analyze_menubutton(self, var: IntVar, menu: Menubutton) -> Optional[str]:
+        "fastly analyze the selected IntVar, and return a result"
+        # look for a selection
+        try:
+            index = var.get()
+        except Exception as e:
+            messagebox.showerror("Parametro inadecuado", f"""En el menu desplegable de opciones, no se ha podido detectar
+una seleccion. Verifique e intente de nuevo. 
+Si le parece haber hallado un error, reportelo a:
+
+    http://github.com/ControlDeAgua/ControlDeAgua/issues/new
+
+(Error: '{str(e)}')""")
+            return None
+        
+        # return the translated selection
+        try:
+            return self.product_index[index - 1]
+        except Exception as e:
+            messagebox.showwarning("Error inesperado", f"""Se ha presentado un error no esperado. Por favor reportelo en
+<http://github.com/ControlDeAgua/ControlDeAgua/issues/new>
+
+(Error: '{str(e)}')""")
+            return None
 
     def evaluate(self) -> None:
         "get sure everything is all right. After this point is correctly done you will be redirected to self.update_db()"
         # first, extract the string variables
         try:
-            client, vendor = self.client.get(), self.vendor.get()
+            vendor = self.vendor.get()
             if len(vendor) < 1:
                 messagebox.showerror("Valores de entrada incompletos", """Parece que el programa no ha reconocido alguna entrada de texto.
 Revise que los datos introducidos se hallen completos e intente de nuevo.
@@ -180,10 +207,15 @@ Revise los datos introducidos e intente de nuevo.
 
 (Error reportado en consola: '{str(e)}')""")
             return None
+        # get the menu selection
+        product = self.analyze_menubutton(self.menu_selection, self.client)
+        if product is None:
+            # error reported at function, then just skip
+            return None
         # then, get the number prompt
         try:
             reading = self.reading.get()
-            per_unit = self.per_unit.get(client)
+            per_unit = self.per_unit.get(product)
             unit_count = self.unit_count.get()
         except (TclError, ValueError) as e:
             messagebox.showwarning("Error reportado", f"""Parece que el programa ha rechazado alguna entrada numerica.
@@ -195,7 +227,7 @@ Revise los datos introducidos e intente de nuevo.
         if messagebox.askyesno("¿Seguir?", """¿Desea seguir con el proceso usando las variables definidas?
 (Este proceso no se puede deshacer)"""):
             self.update_db(reading,
-                           client,
+                           product,
                            vendor,
                            per_unit,
                            unit_count)
