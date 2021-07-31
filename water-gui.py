@@ -106,7 +106,7 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
         # add an image logo
         if os.path.exists(FOLDER+"img/home.jpg"):
             img_file = ImageTk.PhotoImage(file=FOLDER+"img/home.jpg")
-            setSize(self.root, 500, 500) # WARNING: take a look for this when inserting a new image!
+            setSize(self.root, 678, 455) # WARNING: take a look for this when inserting a new image!
         else:
             # there is no home image! use a weird supply image
             img_file = ImageTk.PhotoImage(file=FOLDER+"img/home-supply.jpg")
