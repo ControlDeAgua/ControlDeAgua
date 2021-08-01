@@ -137,7 +137,7 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
         self.reading = DoubleVar()
         self.menu_selection = IntVar()
         self.per_unit = ProductMap()
-        self.product_index = list(self.per_unit)
+        self.product_index = self.per_unit.get_list()
         self.unit_count = DoubleVar()
         # water amount
         entry_l = Label(self.rpage, text="1. Introduzca la lectura del odometro", bg="whitesmoke", fg="black",
@@ -148,7 +148,7 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
         font=("Calibri", "12", "bold")).grid(row=1, column=0, sticky="ew")
         self.client = get_menubutton(self.rpage,
                                      self.product_index, # use a list shared by all
-                                     self.menu_selection(),
+                                     self.menu_selection,
                                      row=1,
                                      column=1)
         # unit prompt
