@@ -138,6 +138,6 @@ class ProductMap:
         except:
             raise ValueError(f"Argument given by the listbox not found: {arg} (KeyError)")
     
-    def __list__(self) -> List[str]:
+    def get_list(self) -> List[str]:
         "list(self) method."
         return self.product_index
