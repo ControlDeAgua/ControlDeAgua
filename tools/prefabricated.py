@@ -75,20 +75,11 @@ reporte esto al desarrollador del producto.
 
 #####################################################################################################################
 
-class VariableCollector:
-    "collect the variables"
-
-    def __init__(self, *args: Tuple[str, IntVar]):
-        "constructor."
-        self.vars = {}
-
-        for item in args:
-            self.vars[item[0]] = item[1]
-
 # Menubutton builder
 def get_menubutton(
     root: Frame,
     options: List[str],
+    variable: Var,
     row: int = 0,
     column: int = 0,
     sticky: str = "ew"
@@ -138,5 +129,14 @@ reporte esto al desarrollador del producto.
     # generate the menu button using a menu widget
     index = 1
     mb = Menubutton(root, text="Seleccione una opcion")
-
     mn = Menu(mb, tearoff=0)
+    
+    # add the options to the Menu widget
+    for option in options:
+        mn.add_radiobutton(label=option.strip(), variable=variable, value=index)
+        index += 1
+    
+    # grid the Menubutton
+    mb["menu"] = mn
+    mb.grid(row=row, column=column, sticky=sticky)
+    return mb

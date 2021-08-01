@@ -12,7 +12,7 @@ import json
 import sqlite3
 from tkinter import messagebox
 from datetime import datetime
-from typing import Dict
+from typing import Dict, List
 
 Prefix = "C:/Program files/Control de Agua/db/"
 Container = []
@@ -128,9 +128,16 @@ class ProductMap:
 
     def __init__(self) -> None:
         self.products = get_product_dict()
+        # use a universal index from `self.products` to avoid
+        # a product mismatch
+        self.product_index = self.products.keys()
 
     def get(self, arg: str) -> float:
         try:
             return self.products[arg]
         except:
             raise ValueError(f"Argument given by the listbox not found: {arg} (KeyError)")
+    
+    def __list__(self) -> List[str]:
+        "list(self) method."
+        return self.product_index
