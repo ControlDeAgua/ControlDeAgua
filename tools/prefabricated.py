@@ -79,7 +79,7 @@ reporte esto al desarrollador del producto.
 def get_menubutton(
     root: Frame,
     options: List[str],
-    variable: Var,
+    variable: IntVar,
     row: int = 0,
     column: int = 0,
     sticky: str = "ew"
