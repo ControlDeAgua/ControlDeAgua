@@ -1,0 +1,45 @@
+# Based on the `python-app.yml` template from GitHub actions:
+# https://github.com/actions/starter-workflows/blob/main/ci/python-app.yml
+#
+# Adapted by Diego Ramirez.
+
+name: Python application
+
+on:
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest # remember that ControlDeAgua is built for Windows only!
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        # At this point, you might ask: "why 3.8, when 3.9 is newer?". Well,
+        # the original ControlDeAgua distribution is built under Python 3.8.2,
+        # so Python 3.8 is a good specifier.
+        python-version: 3.8
+    - name: Display Python version
+      run: python -c "import sys; print(sys.version)"
+    - name: Install pip dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools
+        pip install flake8 pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: Test with pytest
+      run: |
+        pytest
+    - name: Finalize the test
+      run: python -c "print('Process completed!')"
