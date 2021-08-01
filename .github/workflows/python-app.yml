@@ -3,7 +3,7 @@
 #
 # Adapted by Diego Ramirez.
 
-name: Python application
+name: Python application tests
 
 on:
   push:
