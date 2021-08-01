@@ -148,7 +148,7 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
         font=("Calibri", "12", "bold")).grid(row=1, column=0, sticky="ew")
         self.client = get_menubutton(self.rpage,
                                      self.product_index, # use a list shared by all
-                                     self.menu_selection(),
+                                     self.menu_selection,
                                      row=1,
                                      column=1)
         # unit prompt
