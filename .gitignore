@@ -39,8 +39,7 @@ pip-delete-this-directory.txt
 
 # Unit test / coverage reports
 htmlcov/
-.tox/
-.nox/
+.[nt]ox/
 .coverage
 .coverage.*
 .cache
@@ -127,3 +126,23 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Profiling related artifacts
+*.prof
+
+# Misc
+*~
+.*.sw?
+
+# For IntelliJ IDEs (basically PyCharm)
+.idea/
+
+# For Visual Studio Code
+.vscode/
+
+# For Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Scratch Pad for experiments
+.scratch
