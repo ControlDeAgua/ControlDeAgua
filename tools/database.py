@@ -44,26 +44,25 @@ def _db_exists(pathname: str) -> bool:
 def ensureDatabase(name: str, use_prefix: bool = True) -> None:
     "get sure that the db exists. If not, create one."
     realname = _db_route(name, prefix=use_prefix)
-    if not _db_exists(realname):
-        # the db does not exists, the tables must be created.
-        conn = sqlite3.connect(realname)
-        cur = conn.cursor()
-        cur.executescript("""
-CREATE TABLE Prompt (
-    id           INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-    vendor_id    INTEGER,
-    product_id   INTEGER,
-    water_read   INTEGER,
-    cost         INTEGER,
-    time         TEXT
+    # if the db does not exists, the tables must be created.
+    conn = sqlite3.connect(realname)
+    cur = conn.cursor()
+    cur.executescript("""
+CREATE TABLE IF NOT EXISTS Prompt (
+    id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+    vendor_id       INTEGER,
+    product_id      INTEGER,
+    odometer_read   INTEGER,
+    cost            INTEGER,
+    datetime        TEXT
 );
 
-CREATE TABLE Products (
+CREATE TABLE IF NOT EXISTS Products (
     id       INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     name     TEXT
 );
 
-CREATE TABLE Vendors (
+CREATE TABLE IF NOT EXISTS Vendors (
     id       INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     name     TEXT)
 """)
@@ -99,7 +98,8 @@ def buildInstertionCommand(conn, cur, read: float, client: str, vendor: str, uni
         total_cost = units * unit_c
     except:
         messagebox.showwarning("Error operativo", """Algo ha sucedido al calcular el costo total.
-Intente de nuevo o revise esas entradas.""")
+Intente de nuevo o revise esas entradas. Si todo es correcto,
+favor de reportarlo en http://github.com/ControlDeAgua/ControldeAgua/issues/new""")
     # ensure and select the vendor id
     cur.execute("""INSERT OR IGNORE INTO Vendors (name)
         VALUES ( ? )""", (vendor, )) # add a vendor name if it doesn't exists
@@ -107,12 +107,14 @@ Intente de nuevo o revise esas entradas.""")
     vendor_id = cur.fetchone()[0]
     # do it with the client, too
     cur.execute("""INSERT OR IGNORE INTO Products (name)
-        VALUES ( ? )""", (client, )) # add a client name, if it doesn't exists
+        VALUES ( ? )""", (client, )) # add a product name, if it doesn't exists
     cur.execute('SELECT id FROM Products WHERE name = ? ', (client, ))
     client_id = cur.fetchone()[0]
     # update the selected data
+    # (we are automattically adding a datetime,
+    # as a security add-on)
     cur.execute("""INSERT INTO Prompt
-        (vendor_id, product_id, water_read, cost, time) VALUES ( ?, ?, ?, ?, ? )""",
+        (vendor_id, product_id, odometer_read, cost, datetime) VALUES ( ?, ?, ?, ?, ? )""",
         (vendor_id, client_id, read, total_cost, datetime.today().strftime("%B %d, %Y %H:%M:%S")))
     conn.commit()
 
