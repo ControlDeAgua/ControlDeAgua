@@ -132,7 +132,7 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
         "prompt to enter new things."
         self.rpage = Frame(self.root)
         self.rpage.grid()
-        setSize(self.root, 489, 280)
+        setSize(self.root, 505, 115)
         # data variables to prompt
         self.reading = DoubleVar()
         self.menu_selection = IntVar()
