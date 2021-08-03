@@ -132,7 +132,7 @@ class ProductMap:
         self.products = get_product_dict()
         # use a universal index from `self.products` to avoid
         # a product mismatch
-        self.product_index = self.products.keys()
+        self.product_index = list(self.products.keys())
 
     def get(self, arg: str) -> float:
         try:
