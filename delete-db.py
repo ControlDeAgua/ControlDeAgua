@@ -21,6 +21,9 @@ def destroy_database(pathname: str) -> None:
 ¿No ha eliminado previamente esta base de datos? Verifique o intente de nuevo.""")
             return None
         os.remove(pathname)
+        # after destroying the file, rewrite the scheme
+        ensureDatabase(pathname, False)
+        # completion message
         messagebox.showinfo("Proceso terminado", "El proceso ha terminado exitosamente. La base de datos fue eliminada.")
     except Exception as e:
         messagebox.showerror("Error al eliminar", f"""Parece que no se puede eliminar el archivo '{pathname}'.
