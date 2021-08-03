@@ -47,10 +47,10 @@ def parse_dates(d1: str, d2: str) -> Dict[str]:
 def compare_dates(date1: str, date2: str) -> Optional[bool]:
     "compare 2 strings with datetimes"
     d1, d2 = parse_dates(date1, date2)
-    if (int(d1["year"]) < int(d2["year"]) or
-        d1["year"] == d2["year"] and MONTH_MAP[d1["month"]] < MONTH_MAP[d2["month"]] or
-        d1["year"] == d2["year"] and d1["month"] == d2["month"] and d1["day"] < d2["day"] or
-        d1["year"] == d2["year"] and d1["month"] == d2["month"] and d1["day"] == d2["day"] and d1["time"] < d2["time"]):
+    if (int(d1["year"]) > int(d2["year"]) or
+        d1["year"] == d2["year"] and MONTH_MAP[d1["month"]] > MONTH_MAP[d2["month"]] or
+        d1["year"] == d2["year"] and d1["month"] == d2["month"] and d1["day"] > d2["day"] or
+        d1["year"] == d2["year"] and d1["month"] == d2["month"] and d1["day"] == d2["day"] and d1["time"] > d2["time"]):
         # if `d1` represents an older date than `d2`, raise a ValueError
         raise ValueError(f"Date '{date1}' is larger than '{date2}'")
     return True
