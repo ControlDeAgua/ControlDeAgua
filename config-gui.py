@@ -128,13 +128,16 @@ y privilegios del administrador.""")
         command=lambda: self.go("register -> home")).grid(row=2, column=0, sticky="ew")
         send_b = Button(self.regframe, text="Registrar", font=("Calibri", "13", "bold"), bg="green", fg="white",
         command=self.register_internal).grid(row=2, column=1, sticky="ew")
+    
+    def see_registry(self) -> None:
+        "See the sales registry"
 
     def register_internal(self) -> None:
         "make a database registry for the latest user."
         try:
             new_usr = self.new_name.get().strip()
             new_id = self.new_pwd.get().strip()
-            if len(new_usr) < 1: raise Exception(f'Expected non-empty strings, got ""')
+            if len(new_usr) < 1: raise ValueError(f'Expected non-empty strings, got ""')
             # update
             to_save = []
             with open("C:/Program Files/Control de Agua/tools/users.json", "r") as f:
@@ -179,6 +182,8 @@ Datos del registro:
             # the grid_remove (basically because
             # the door is not "activated")
             self.menu()
+        elif arg == "view registry":
+            self.see_registry()
         else:
             self.notDefined(arg)
 
