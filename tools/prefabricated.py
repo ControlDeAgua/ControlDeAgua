@@ -83,7 +83,7 @@ def get_menubutton(
     row: int = 0,
     column: int = 0,
     sticky: str = "ew"
-) -> Tuple[Menubutton, VariableCollector]:
+) -> Menubutton:
     """
     Generate a tkinter MenuButton. Follow a similar process than
     get_listbox().
