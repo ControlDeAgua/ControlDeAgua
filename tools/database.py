@@ -4,7 +4,10 @@ Tools for database management.
 (specificly made for the project "Control de Agua")
 """
 
-__all__ = ["ensureDatabase", "getDatabase"]
+__all__ = ["ensureDatabase",
+           "getDatabase",
+           "ProductMap",
+           "get_dates"]
 
 import atexit
 import os
@@ -138,8 +141,29 @@ class ProductMap:
         try:
             return self.products[arg]
         except:
-            raise ValueError(f"Argument given by the listbox not found: {arg} (KeyError)")
+            raise ValueError(f"Argument given by the listbox/menubutton was not found: {arg} (KeyError)")
     
     def get_list(self) -> List[str]:
         "list(self) method."
         return self.product_index
+
+def get_dates(pathname: str, use_prefix: bool = True) -> List[str]:
+    "get all the datetimes from the database"
+    # get connected
+    conn, cur = getDatabase(pathname, use_prefix)
+    # get the dtaes on table "Prompt"
+    cur.execute("SELECT datetime FROM Prompt")
+    datetimes = cur.fetchall()
+    # at this point, we have a list with this format:
+    # [(data,), (data,), (data,),]
+    #
+    # but we want something like this:
+    # [data, data, data]
+    #
+    # to get what we want, we are extracting 
+    # `data` and returning a fixed `datetimes`
+    # (called `datetimes_fixed`).
+    datetimes_fixed = []
+    for date in datetimes:
+        datetimes_fixed.append(date[0])
+    return datetimes_fixed
