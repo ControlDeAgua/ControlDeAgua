@@ -69,12 +69,9 @@ CREATE TABLE IF NOT EXISTS Vendors (
     id       INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     name     TEXT)
 """)
-        conn.commit()
-        cur.close()
-        del(cur, conn)
-    else:
-        # the setup is not needed, just pass
-        pass
+    conn.commit()
+    cur.close()
+    del(cur, conn)
     # log the database path
     Container.append(realname)
 
