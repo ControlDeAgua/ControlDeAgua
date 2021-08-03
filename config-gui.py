@@ -176,7 +176,7 @@ Verifique e intente de nuevo.
         scnd_date_l = Label(self.sales_f, text="Introduzca una fecha final para buscar:", bg="whitesmoke", fg="black",
         font=("Calibri", "13", "bold")).grid(row=1, column=0, sticky="ew")
         self.di2 = IntVar()
-        scnd_date_m = get_menubutton(self.sales_f, self.date_list, self.di1, 1, 1, "ew")
+        scnd_date_m = get_menubutton(self.sales_f, self.date_list, self.di2, 1, 1, "ew")
         # buttons to launch
         cancel_b = Button(self.sales_f, text="Cancelar busqueda", bg="red", fg="white", font=("Calibri", "13", "bold"),
         command=lambda: self.go("registry_view -> home")).grid(row=2, column=0, sticky="ew")
