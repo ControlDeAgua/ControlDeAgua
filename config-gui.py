@@ -26,6 +26,7 @@ class GUI:
         "constructor method."
         # handle the root internally
         self.root = root
+        windowTitle(self.root, "App de configuracion")
         # generate the menu directly
         if get_admin_pwd() is not None:
             # there is an admin password, ask for it
@@ -35,10 +36,10 @@ class GUI:
             messagebox.showwarning("Advertencia: Cuenta de Administrador desprotegida", """La cuenta del administrador no tiene
 actualmente una clave de acceso. Esto puede ser riesgoso,
 pues cualquier usuario podra ingresar a las opciones
-del administrador.""")
+y privilegios del administrador.""")
             self.go("get-in-directly")
 
-    def ensureAdmin(self, next_page: Optional[Callable] = None) -> None:
+    def ensureAdmin(self, next_page: Optional[Callable] = None) -> Optional[bool]:
         "get sure the admin is here..."
         self.adminport = Frame(self.root)
         self.adminport.grid()
@@ -57,6 +58,7 @@ del administrador.""")
                     return True
             else:
                 messagebox.showerror("Error", "Contraseña incorrecta.")
+                return False
         # create the widgets
         door_l = Label(self.adminport, text="Ingrese contraseña del administrador del programa:",
         font=("Calibri", "14", "bold")).grid(row=0, column=0, sticky="ew")
@@ -101,6 +103,9 @@ del administrador.""")
         # view the registered users
         view_usrs = Button(self.welcome, text="Ver lista de usuarios", bg="whitesmoke", fg="black",
         font=("Calibri", "14", "bold"), command=lambda: self.go("view users")).grid(row=2, column=0, sticky="ew")
+        # view a report
+        view_report = Button(self.welcome, text="Ver registro de ventas", bg="whitesmoke", fg="black",
+        font=("Calibri", "14", "bold"), command=lambda: self.go("view registry"))
         # exit button
         get_out = Button(self.welcome, text="Salir de la pagina", bg="red", fg="white",
         font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=3, column=0, sticky="ew")
