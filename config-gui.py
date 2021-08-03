@@ -169,7 +169,7 @@ Verifique e intente de nuevo.
         # first date prompt
         first_date_l = Label(self.sales_f, text="Introduzca una fecha inicial para buscar:", bg="whitesmoke", fg="black",
         font=("Calibri", "13", "bold")).grid(row=0, column=0, sticky="ew")
-        self.date_list = get_dates()
+        self.date_list = get_dates("WaterDB.sqlite", True)
         self.di1 = IntVar()
         first_date_m = get_menubutton(self.sales_f, self.date_list, self.di1, 0, 1, "ew")
         # second date
@@ -234,6 +234,7 @@ Datos del registro:
             # the door is not "activated")
             self.menu()
         elif arg == "view registry":
+            self.welcome.grid_remove()
             self.see_registry()
         elif arg == "registry_view -> home":
             self.sales_f.grid_remove()
