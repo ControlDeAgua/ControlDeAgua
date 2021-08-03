@@ -27,7 +27,7 @@ MONTH_MAP = {"January": 1,
              "November": 11,
              "December": 12}
 
-def parse_dates(d1: str, d2: str) -> Dict[str, ...]:
+def parse_dates(d1: str, d2: str) -> Dict[str]:
     "translate the datetime strings"
     d1, d2 = d1.replace(",", "").split(), d2.replace(",", "").split()
     d1_dict, d2_dict = {}, {}
