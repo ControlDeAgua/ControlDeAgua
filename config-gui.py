@@ -9,6 +9,8 @@ from tkinter import *
 from tkinter import messagebox
 from idlelib.textview import view_text
 from tools.database import *
+from tools.datetimes import compare_dates
+from tools.prefabricated import get_menubutton
 from tools.windowmanager import *
 from tools.users import check, get_admin_pwd
 
@@ -129,6 +131,33 @@ y privilegios del administrador.""")
         send_b = Button(self.regframe, text="Registrar", font=("Calibri", "13", "bold"), bg="green", fg="white",
         command=self.register_internal).grid(row=2, column=1, sticky="ew")
     
+    def see_registry_internal(self) -> None:
+        "Second part of `see_registry`."
+        try:
+            date_a, date_b = self.date_list[self.di1.get() - 1], self.date_list[self.di2.get() - 1]
+            compare_dates(date_a, date_b)
+        except (KeyError, NameError, ValueError) as exc:
+            messagebox.showerror("Error al mostrar", f"""No se pudo mostrar los datos solicitados. El sistema no pudo hallar
+ninguna fecha, o la segunda es mas reciente que la primera (lo cual no es operable).
+Verifique e intente de nuevo.
+
+(Error: '{str(exc)}')""")
+            return None
+        # run directly the SQL command to get the storage
+        CUR.execute("SELECT vendor_id, product_id, odometer_read, cost, datetime FROM Prompt WHERE datetime >= ( ? ) AND datetime <= ( ? )", ( date_a, date_b ))
+        finale = CUR.fetchall()
+        finale_str = ""
+        for v, p, o, c, d in finale:
+            # translate some IDs
+            CUR.execute("SELECT name FROM Vendors WHERE id == ( ? )", ( v, ))
+            v = CUR.fetchone()[0]
+            CUR.execute("SELECT name FROM Products WHERE id == ( ? )", ( p, ))
+            p = CUR.fetchone()[0]
+            # build a string to report
+            add_on "="*60 + "\n" + f"- Fecha: {d}\n" + f"- Vendedor: {v}\n" + f"- Producto: {p}\n" + f"- Lectura del odometro registrada: {o}\n" + f"- Costo: {c}\n"
+            finale_str += add_on
+        view_text(self.root, "Registro de ventas", finale_str)
+    
     def see_registry(self) -> None:
         """
         See the sales registry. This giant function will prompt for an initial date
@@ -137,8 +166,22 @@ y privilegios del administrador.""")
         """
         self.sales_f = Frame(self.root)
         self.sales_f.grid()
-        first_date_l = Label(self.sales_f, text="Introduzca una primera fecha para buscar:", bg="whitesmoke", fg="black",
+        # first date prompt
+        first_date_l = Label(self.sales_f, text="Introduzca una fecha inicial para buscar:", bg="whitesmoke", fg="black",
         font=("Calibri", "13", "bold")).grid(row=0, column=0, sticky="ew")
+        self.date_list = get_dates()
+        self.di1 = IntVar()
+        first_date_m = get_menubutton(self.sales_f, self.date_list, self.di1, 0, 1, "ew")
+        # second date
+        scnd_date_l = Label(self.sales_f, text="Introduzca una fecha final para buscar:", bg="whitesmoke", fg="black",
+        font=("Calibri", "13", "bold")).grid(row=1, column=0, sticky="ew")
+        self.di2 = IntVar()
+        scnd_date_m = get_menubutton(self.sales_f, self.date_list, self.di1, 1, 1, "ew")
+        # buttons to launch
+        cancel_b = Button(self.sales_f, text="Cancelar busqueda", bg="red", fg="white", font=("Calibri", "13", "bold"),
+        command=lambda: self.go("registry_view -> home")).grid(row=2, column=0, sticky="ew")
+        send_b = Button(self.sales_f, text="Buscar", bg="green", fg="white", font=("Calibri", "13", "bold"),
+        command=self.see_registry_internal).grid(row=2, column=1, sticky="ew")
 
     def register_internal(self) -> None:
         "make a database registry for the latest user."
@@ -192,6 +235,9 @@ Datos del registro:
             self.menu()
         elif arg == "view registry":
             self.see_registry()
+        elif arg == "registry_view -> home":
+            self.sales_f.grid_remove()
+            self.menu()
         else:
             self.notDefined(arg)
 
