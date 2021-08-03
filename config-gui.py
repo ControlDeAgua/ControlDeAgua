@@ -19,47 +19,8 @@ DB, CUR = getDatabase("WaterDB.sqlite")
 
 class GUI:
     """
-    A LETTER ABOUT FAILURE
-    ---------------------------------------------------------------------------
-
-    I don't love this project, anymore...
-
-    I don't care of this, I will only code it
-    to fight the truth. I won't be defeated... not today!
-
-    I must be strong, face the truth, you know...
-
-    I forgot all what I did, so I must begin again. Oh,
-    no, I lost my knowledge... IT CANNOT BE!!!
-
-    Could I try again? Do I have a chance? I hope so.
-
-    I have to fight, don't give up. I must fight, just one
-    more time. Maybe all the developers must face this in a
-    certain place of their career... maybe.
-
-    I must fight again.
-
-    My mind hits me: "There is no future!". That is false, we
-    can work it out... once again. I think I can get it.
-
-    Can a 13-year old kid recover a 1 day work in only 1 hour? I
-    don't think so... But maybe I have more than an hour... Hold
-    on... I'm thinking...
-
-    Got it! I know what happened: I just failed, like anyone
-    does. And if I failed like most of the people, I can try again,
-    like most of the people...
-
-    Let's try it...
-
-                                                         Diego Ramirez, when he
-                                               lost all his work... this object
-                                              is the evidence of his failure...
-                                                              and his uprising.
-
-                                                     (He lost the original file
-                                                 for the feature covered here)."""
+    GUI class for this feature.
+    """
 
     def __init__(self, root: Tk) -> None:
         "constructor method."
