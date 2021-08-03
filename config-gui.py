@@ -154,7 +154,7 @@ Verifique e intente de nuevo.
             CUR.execute("SELECT name FROM Products WHERE id == ( ? )", ( p, ))
             p = CUR.fetchone()[0]
             # build a string to report
-            add_on "="*60 + "\n" + f"- Fecha: {d}\n" + f"- Vendedor: {v}\n" + f"- Producto: {p}\n" + f"- Lectura del odometro registrada: {o}\n" + f"- Costo: {c}\n"
+            add_on = "="*60 + "\n" + f"- Fecha: {d}\n" + f"- Vendedor: {v}\n" + f"- Producto: {p}\n" + f"- Lectura del odometro registrada: {o}\n" + f"- Costo: {c}\n"
             finale_str += add_on
         view_text(self.root, "Registro de ventas", finale_str)
     
