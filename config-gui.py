@@ -105,10 +105,10 @@ y privilegios del administrador.""")
         font=("Calibri", "14", "bold"), command=lambda: self.go("view users")).grid(row=2, column=0, sticky="ew")
         # view a report
         view_report = Button(self.welcome, text="Ver registro de ventas", bg="whitesmoke", fg="black",
-        font=("Calibri", "14", "bold"), command=lambda: self.go("view registry"))
+        font=("Calibri", "14", "bold"), command=lambda: self.go("view registry")).grid(row=3, column=0, sticky="ew")
         # exit button
         get_out = Button(self.welcome, text="Salir de la pagina", bg="red", fg="white",
-        font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=3, column=0, sticky="ew")
+        font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=4, column=0, sticky="ew")
 
     def reg_page(self) -> None:
         "generate a register page."
@@ -130,7 +130,15 @@ y privilegios del administrador.""")
         command=self.register_internal).grid(row=2, column=1, sticky="ew")
     
     def see_registry(self) -> None:
-        "See the sales registry"
+        """
+        See the sales registry. This giant function will prompt for an initial date
+        and a final date (I mean, a period to search) and then it will return a
+        formatted output.
+        """
+        self.sales_f = Frame(self.root)
+        self.sales_f.grid()
+        first_date_l = Label(self.sales_f, text="Introduzca una primera fecha para buscar:", bg="whitesmoke", fg="black",
+        font=("Calibri", "13", "bold")).grid(row=0, column=0, sticky="ew")
 
     def register_internal(self) -> None:
         "make a database registry for the latest user."
