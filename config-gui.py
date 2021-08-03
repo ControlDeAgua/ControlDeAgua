@@ -9,6 +9,8 @@ from tkinter import *
 from tkinter import messagebox
 from idlelib.textview import view_text
 from tools.database import *
+from tools.datetimes import compare_dates
+from tools.prefabricated import get_menubutton
 from tools.windowmanager import *
 from tools.users import check, get_admin_pwd
 
@@ -26,6 +28,7 @@ class GUI:
         "constructor method."
         # handle the root internally
         self.root = root
+        windowTitle(self.root, "App de configuracion")
         # generate the menu directly
         if get_admin_pwd() is not None:
             # there is an admin password, ask for it
@@ -35,10 +38,10 @@ class GUI:
             messagebox.showwarning("Advertencia: Cuenta de Administrador desprotegida", """La cuenta del administrador no tiene
 actualmente una clave de acceso. Esto puede ser riesgoso,
 pues cualquier usuario podra ingresar a las opciones
-del administrador.""")
+y privilegios del administrador.""")
             self.go("get-in-directly")
 
-    def ensureAdmin(self, next_page: Optional[Callable] = None) -> None:
+    def ensureAdmin(self, next_page: Optional[Callable] = None) -> Optional[bool]:
         "get sure the admin is here..."
         self.adminport = Frame(self.root)
         self.adminport.grid()
@@ -57,6 +60,7 @@ del administrador.""")
                     return True
             else:
                 messagebox.showerror("Error", "Contraseña incorrecta.")
+                return False
         # create the widgets
         door_l = Label(self.adminport, text="Ingrese contraseña del administrador del programa:",
         font=("Calibri", "14", "bold")).grid(row=0, column=0, sticky="ew")
@@ -101,9 +105,12 @@ del administrador.""")
         # view the registered users
         view_usrs = Button(self.welcome, text="Ver lista de usuarios", bg="whitesmoke", fg="black",
         font=("Calibri", "14", "bold"), command=lambda: self.go("view users")).grid(row=2, column=0, sticky="ew")
+        # view a report
+        view_report = Button(self.welcome, text="Ver registro de ventas", bg="whitesmoke", fg="black",
+        font=("Calibri", "14", "bold"), command=lambda: self.go("view registry")).grid(row=3, column=0, sticky="ew")
         # exit button
         get_out = Button(self.welcome, text="Salir de la pagina", bg="red", fg="white",
-        font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=3, column=0, sticky="ew")
+        font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=4, column=0, sticky="ew")
 
     def reg_page(self) -> None:
         "generate a register page."
@@ -123,13 +130,65 @@ del administrador.""")
         command=lambda: self.go("register -> home")).grid(row=2, column=0, sticky="ew")
         send_b = Button(self.regframe, text="Registrar", font=("Calibri", "13", "bold"), bg="green", fg="white",
         command=self.register_internal).grid(row=2, column=1, sticky="ew")
+    
+    def see_registry_internal(self) -> None:
+        "Second part of `see_registry`."
+        try:
+            date_a, date_b = self.date_list[self.di1.get() - 1], self.date_list[self.di2.get() - 1]
+            compare_dates(date_a, date_b)
+        except (KeyError, NameError, ValueError) as exc:
+            messagebox.showerror("Error al mostrar", f"""No se pudo mostrar los datos solicitados. El sistema no pudo hallar
+ninguna fecha, o la segunda es mas reciente que la primera (lo cual no es operable).
+Verifique e intente de nuevo.
+
+(Error: '{str(exc)}')""")
+            return None
+        # run directly the SQL command to get the storage
+        CUR.execute("SELECT vendor_id, product_id, odometer_read, cost, datetime FROM Prompt WHERE datetime >= ( ? ) AND datetime <= ( ? )", ( date_a, date_b ))
+        finale = CUR.fetchall()
+        finale_str = ""
+        for v, p, o, c, d in finale:
+            # translate some IDs
+            CUR.execute("SELECT name FROM Vendors WHERE id == ( ? )", ( v, ))
+            v = CUR.fetchone()[0]
+            CUR.execute("SELECT name FROM Products WHERE id == ( ? )", ( p, ))
+            p = CUR.fetchone()[0]
+            # build a string to report
+            add_on "="*60 + "\n" + f"- Fecha: {d}\n" + f"- Vendedor: {v}\n" + f"- Producto: {p}\n" + f"- Lectura del odometro registrada: {o}\n" + f"- Costo: {c}\n"
+            finale_str += add_on
+        view_text(self.root, "Registro de ventas", finale_str)
+    
+    def see_registry(self) -> None:
+        """
+        See the sales registry. This giant function will prompt for an initial date
+        and a final date (I mean, a period to search) and then it will return a
+        formatted output.
+        """
+        self.sales_f = Frame(self.root)
+        self.sales_f.grid()
+        # first date prompt
+        first_date_l = Label(self.sales_f, text="Introduzca una fecha inicial para buscar:", bg="whitesmoke", fg="black",
+        font=("Calibri", "13", "bold")).grid(row=0, column=0, sticky="ew")
+        self.date_list = get_dates()
+        self.di1 = IntVar()
+        first_date_m = get_menubutton(self.sales_f, self.date_list, self.di1, 0, 1, "ew")
+        # second date
+        scnd_date_l = Label(self.sales_f, text="Introduzca una fecha final para buscar:", bg="whitesmoke", fg="black",
+        font=("Calibri", "13", "bold")).grid(row=1, column=0, sticky="ew")
+        self.di2 = IntVar()
+        scnd_date_m = get_menubutton(self.sales_f, self.date_list, self.di1, 1, 1, "ew")
+        # buttons to launch
+        cancel_b = Button(self.sales_f, text="Cancelar busqueda", bg="red", fg="white", font=("Calibri", "13", "bold"),
+        command=lambda: self.go("registry_view -> home")).grid(row=2, column=0, sticky="ew")
+        send_b = Button(self.sales_f, text="Buscar", bg="green", fg="white", font=("Calibri", "13", "bold"),
+        command=self.see_registry_internal).grid(row=2, column=1, sticky="ew")
 
     def register_internal(self) -> None:
         "make a database registry for the latest user."
         try:
             new_usr = self.new_name.get().strip()
             new_id = self.new_pwd.get().strip()
-            if len(new_usr) < 1: raise Exception(f'Expected non-empty strings, got ""')
+            if len(new_usr) < 1: raise ValueError(f'Expected non-empty strings, got ""')
             # update
             to_save = []
             with open("C:/Program Files/Control de Agua/tools/users.json", "r") as f:
@@ -173,6 +232,11 @@ Datos del registro:
             # same than "get-in", but overriding
             # the grid_remove (basically because
             # the door is not "activated")
+            self.menu()
+        elif arg == "view registry":
+            self.see_registry()
+        elif arg == "registry_view -> home":
+            self.sales_f.grid_remove()
             self.menu()
         else:
             self.notDefined(arg)
