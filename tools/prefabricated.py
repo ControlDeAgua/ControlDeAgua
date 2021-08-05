@@ -114,7 +114,7 @@ reporte esto al desarrollador del producto.
 
 - Test results:
   - 'root' expected class: '_tkinter.Frame' -> 'tkinter.Frame'
-  - 'root' real class: {root.__class__}""")
+  - 'root' real class: {type(root).__name__}""")
     else:
         assert isinstance(root, Frame)
     try:
