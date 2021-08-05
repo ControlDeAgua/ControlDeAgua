@@ -170,9 +170,9 @@ Verifique e intente de nuevo.
         for vendor in vendors_operator.keys():
             if len(vendors_operator.keys()) == 1:
                 # only one vendor?
-                intro += vendor
+                intro += vendor + f" ({vendors_operator[vendor]})"
                 break
-            intro += vendor + ", "
+            intro += vendor + f" ({vendors_operator[vendor]}), "
         intro += "\n" + "- Productos vendidos:"
         howmany_sales = 0
         for product in products_operator.keys():
