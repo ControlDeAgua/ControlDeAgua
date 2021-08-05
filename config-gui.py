@@ -146,16 +146,46 @@ Verifique e intente de nuevo.
         # run directly the SQL command to get the storage
         CUR.execute("SELECT vendor_id, product_id, odometer_read, cost, datetime FROM Prompt WHERE datetime >= ( ? ) AND datetime <= ( ? )", ( date_a, date_b ))
         finale = CUR.fetchall()
+        # analyze and translate
         finale_str = ""
+        products_operator = {}
+        vendors_operator = {}
+        final_cost = 0
+        final_odometer = 0
         for v, p, o, c, d in finale:
             # translate some IDs
             CUR.execute("SELECT name FROM Vendors WHERE id == ( ? )", ( v, ))
             v = CUR.fetchone()[0]
             CUR.execute("SELECT name FROM Products WHERE id == ( ? )", ( p, ))
             p = CUR.fetchone()[0]
+            # map some of the data
+            final_cost += int(c)
+            final_odometer += int(o)
+            products_operator[p] = products_operator.get(p, 0) + 1
+            vendors_operator[v] = vendors_operator.get(v, 0) + 1
             # build a string to report
-            add_on = "="*60 + "\n" + f"- Fecha: {d}\n" + f"- Vendedor: {v}\n" + f"- Producto: {p}\n" + f"- Lectura del odometro registrada: {o}\n" + f"- Costo: {c}\n"
+            add_on = "·"*60 + "\n" + f"- Fecha: {d}\n" + f"- Vendedor: {v}\n" + f"- Producto: {p}\n" + f"- Lectura del odometro registrada: {o}\n" + f"- Costo: ${c}\n"
             finale_str += add_on
+        intro = f"VENTAS DESDE '{date_a}' HASTA '{date_b}'\n" + "="*60 + "\n- Vendedores:"
+        for vendor in vendors_operator.keys():
+            if len(vendors_operator.keys()) == 1:
+                # only one vendor?
+                intro += vendor
+                break
+            intro += vendor + ", "
+        intro += "\n" + "- Productos vendidos:"
+        howmany_sales = 0
+        for product in products_operator.keys():
+            if len(products_operator.keys()) == 1:
+                # only one product?
+                intro += product + f"({products_operator[product]})"
+            else:
+                intro += product + f"({products_operator[product]}), "
+            howmany_sales += products_operator[product]
+        intro += "\n" + f"- Cantidad total vendida de productos: {howmany_sales}"
+        intro += "\n" + f"- Costo total: {final_cost}\n- Lectura final del odometro: {final_odometer}"
+        # show the final product
+        finale_str = intro + "\n\n" + finale_str
         view_text(self.root, "Registro de ventas", finale_str)
     
     def see_registry(self) -> None:
