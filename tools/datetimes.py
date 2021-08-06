@@ -12,7 +12,7 @@ Considering this can help us to analyze 2 date strings.
 __all__ = ("parse_dates", "compare_dates")
 
 from datetime import datetime
-from typing import Optional, Dict
+from typing import Optional, Dict, Any
 
 MONTH_MAP = {"January": 1,
              "February": 2,
@@ -27,7 +27,7 @@ MONTH_MAP = {"January": 1,
              "November": 11,
              "December": 12}
 
-def parse_dates(d1: str, d2: str) -> Dict[str]:
+def parse_dates(d1: str, d2: str) -> Dict[str, Any]:
     "translate the datetime strings"
     d1, d2 = d1.replace(",", "").split(), d2.replace(",", "").split()
     d1_dict, d2_dict = {}, {}
