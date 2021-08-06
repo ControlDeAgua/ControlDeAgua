@@ -147,7 +147,7 @@ Verifique e intente de nuevo.
         CUR.execute("SELECT vendor_id, product_id, odometer_read, cost, datetime FROM Prompt WHERE datetime >= ( ? ) AND datetime <= ( ? )", ( date_a, date_b ))
         finale = CUR.fetchall()
         # analyze and translate
-        finale_str = ""
+        finale_str = "\n"
         products_operator = {}
         vendors_operator = {}
         final_cost = 0
@@ -166,14 +166,16 @@ Verifique e intente de nuevo.
             # build a string to report
             add_on = "·"*60 + "\n" + f"- Fecha: {d}\n" + f"- Vendedor: {v}\n" + f"- Producto: {p}\n" + f"- Lectura del odometro registrada: {o}\n" + f"- Costo: ${c}\n"
             finale_str += add_on
-        intro = f"VENTAS DESDE '{date_a}' HASTA '{date_b}'\n" + "="*60 + "\n- Vendedores:"
+        intro = f"VENTAS DESDE '{date_a}' HASTA '{date_b}'\n" + "="*60 + "\n- Vendedores: "
         for vendor in vendors_operator.keys():
             if len(vendors_operator.keys()) == 1:
                 # only one vendor?
                 intro += vendor + f" ({vendors_operator[vendor]})"
                 break
             intro += vendor + f" ({vendors_operator[vendor]}), "
-        intro += "\n" + "- Productos vendidos:"
+        if intro.endswith(", "):
+            intro = intro[:len(intro) - 1]
+        intro += "\n" + "- Productos vendidos: "
         howmany_sales = 0
         for product in products_operator.keys():
             if len(products_operator.keys()) == 1:
@@ -182,10 +184,12 @@ Verifique e intente de nuevo.
             else:
                 intro += product + f"({products_operator[product]}), "
             howmany_sales += products_operator[product]
+        if intro.endswith(", "):
+            intro = intro[:len(intro) - 1]
         intro += "\n" + f"- Cantidad total vendida de productos: {howmany_sales}"
         intro += "\n" + f"- Costo total: {final_cost}\n- Lectura final del odometro: {final_odometer}"
         # show the final product
-        finale_str = intro + "\n\n" + finale_str
+        finale_str = intro + "\n\n" + "*"*60 + finale_str
         view_text(self.root, "Registro de ventas", finale_str)
     
     def see_registry(self) -> None:
