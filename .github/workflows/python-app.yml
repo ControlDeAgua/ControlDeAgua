@@ -15,16 +15,16 @@ jobs:
   build:
 
     runs-on: windows-latest # remember that ControlDeAgua is built for Windows only!
+    strategy:
+      matrix:
+        python-version: [ 3.8, 3.9 ]
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.8
+    - name: Set up Python ${{matrix.python-version}}
       uses: actions/setup-python@v2
       with:
-        # At this point, you might ask: "why 3.8, when 3.9 is newer?". Well,
-        # the original ControlDeAgua distribution is built under Python 3.8.2,
-        # so Python 3.8 is a good specifier.
-        python-version: 3.8
+        python-version: ${{matrix.python-version}}
     - name: Display Python version
       run: python -c "import sys; print(sys.version)"
     - name: Install pip dependencies
