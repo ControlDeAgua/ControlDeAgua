@@ -41,7 +41,7 @@ you really need another implementation, please contact the
 developers of this tool."""
     sys.exit(exit_msg)
 if sys.version_info < (3, 6, 0):
-    exit_msg = """We don't support Python 3.7- usage.
+    exit_msg = """We don't support Python 3.5 (or older) usage.
 Please try to use a newer version."""
     sys.exit(exit_msg)
 
