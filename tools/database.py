@@ -136,10 +136,16 @@ class ProductMap:
 
     def get(self, arg: str) -> float:
         try:
-            return self.products[arg]
+            return self.products[arg][0]
         except:
             raise ValueError(f"Argument given by the listbox/menubutton was not found: {arg} (KeyError)")
-    
+
+    def get_odometer_value(self, arg: str) -> float:
+        try:
+            return self.products[arg][1]
+        except:
+            raise KeyError(f"Odometer value not found for product: {arg} (KeyError)")
+
     def get_list(self) -> List[str]:
         "list(self) method."
         return self.product_index
