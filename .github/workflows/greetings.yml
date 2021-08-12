@@ -1,0 +1,16 @@
+name: Greetings
+
+on: [pull_request, issues]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: "¡Hola! Gracias por abrir esta discusión. Si estás reportando un error o está solicitando una nueva característica, en @ControlDeAgua trataremos de atenderte lo antes posible"
+        pr-message: '¡Gracias por abrir tu primer propuesta! Los desarrolladores de @ControlDeAgua trataremos de atenderte lo antes posible.'
