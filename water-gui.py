@@ -137,10 +137,8 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
         bg="whitesmoke", fg="black").grid(row=2, column=0, sticky="ew")
         log_again = Button(self.home, command=lambda: self.goto("log_again"), text="Cerrar sesion",
         bg="#fff999", fg="red").grid(row=3, column=0, sticky="ew")
-        skip = Button(self.home, command=self.root.quit, text="Salir",
-        bg="#fff999", fg="red").grid(row=4, column=0, sticky="ew")
         usr_name = Label(self.home, text=f"Usuario actual: {self.vendor.get(original=True)}", font=("Calibri", "12", "italic"),
-        bg="white", fg="green").grid(row=5, column=0, sticky="ew")
+        bg="white", fg="green").grid(row=4, column=0, sticky="ew")
 
     def register_page(self) -> None:
         "prompt to enter new things."
