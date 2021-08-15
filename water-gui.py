@@ -69,12 +69,22 @@ class WaterGUI:
     def door(self) -> None:
         "user door."
         self.door_page = Frame(self.root)
-        setSize(self.root, 540, 90)
+        setSize(self.root, 540, 120)
         self.door_page.grid()
         usr_var = StringVar()
         pwd_var = StringVar()
+        actual_odometer = DoubleVar()
         # define a check passer
         def check_user():
+            try:
+                self.actual_odometer_read = actual_odometer.get()
+            except Exception as exc:
+                messagebox.showerror("Error: Lectura no reconocida", f"""La lectura del odometro no fue reconocida correctamente.
+Verifique e intente de nuevo.
+
+(Mensaje de error: '{str(exc)}')
+(Tipo de error: '{type(exc).__name__}')""")
+                self.goto("log-retry")
             self.vendor = UserJar(usr_var.get(),
                                   pwd_var.get(),
                                   get_user_pwd(usr_var.get()),
@@ -95,11 +105,15 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
         font=("Calibri", "12", "bold")).grid(row=1, column=0, sticky="ew")
         pwd_prompt = Entry(self.door_page, width=40, font=("Calibri", "12", "normal"),
         textvariable=pwd_var, show="*").grid(row=1, column=1, sticky="ew")
+        # initial odometer read
+        odometer_l = Label(self.door_page, text="- Introduzca la lectura actual del ododmetro", fg="black", bg="whitesmoke",
+        font=("Calibri", "12", "bold")).grid(row=2, column=0, sticky="ew")
+        odometer_prompt = Entry(self.door_page, width=40, font=("Calibri", "12", "normal"), textvariable=actual_odometer).grid(row=2, column=1, sticky="ew")
         # check the stored data
         check = Button(self.door_page, text="Ingresar ahora", bg="green", fg="white", font=("Calibri", "14", "bold"),
-        command=check_user).grid(row=2, column=0, sticky="ew")
+        command=check_user).grid(row=3, column=0, sticky="ew")
         skip_all = Button(self.door_page, text="Cancelar y salir", bg="red", fg="white",
-        font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=2, column=1, sticky="ew")
+        font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=3, column=1, sticky="ew")
 
     def home_menu(self) -> None:
         "generate the welcome menu."
@@ -130,34 +144,30 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
         "prompt to enter new things."
         self.rpage = Frame(self.root)
         self.rpage.grid()
-        setSize(self.root, 505, 115)
+        setSize(self.root, 505, 90)
         # data variables to prompt
         self.reading = DoubleVar()
         self.menu_selection = IntVar()
         self.per_unit = ProductMap()
         self.product_index = self.per_unit.get_list()
         self.unit_count = DoubleVar()
-        # water amount
-        entry_l = Label(self.rpage, text="1. Introduzca la lectura del odometro", bg="whitesmoke", fg="black",
-        font=("Calibri", "12", "bold")).grid(row=0, column=0, sticky="ew")
-        entry_space = Entry(self.rpage, width=40, textvariable=self.reading).grid(row=0, column=1, sticky="ew")
         # client prompt
-        entry_c = Label(self.rpage, text="2. Producto vendido", bg="whitesmoke", fg="black",
-        font=("Calibri", "12", "bold")).grid(row=1, column=0, sticky="ew")
+        entry_c = Label(self.rpage, text="1. Producto vendido", bg="whitesmoke", fg="black",
+        font=("Calibri", "12", "bold")).grid(row=0, column=0, sticky="ew")
         self.client = get_menubutton(self.rpage,
                                      self.product_index, # use a list shared by all
                                      self.menu_selection,
-                                     row=1,
+                                     row=0,
                                      column=1)
         # unit prompt
-        entry_u = Label(self.rpage, text="3. Unidades vendidas", bg="whitesmoke", fg="black",
-        font=("Calibri", "12", "bold")).grid(row=3, column=0, sticky="ew")
-        units_space = Entry(self.rpage, width=40, textvariable=self.unit_count).grid(row=3, column=1, sticky="ew")
+        entry_u = Label(self.rpage, text="2. Unidades vendidas", bg="whitesmoke", fg="black",
+        font=("Calibri", "12", "bold")).grid(row=1, column=0, sticky="ew")
+        units_space = Entry(self.rpage, width=40, textvariable=self.unit_count).grid(row=1, column=1, sticky="ew")
         # "check" and "cancel" buttons
-        check = Button(self.rpage, text="Entregar ahora", command=self.evaluate, font=("Calibri", "14", "bold"), fg="whitesmoke",
-        bg="green").grid(row=4, column=0, sticky="ew")
-        cancel = Button(self.rpage, text="Cancelar", command=self.reg_cancel, font=("Calibri", "14", "bold"), fg="whitesmoke",
-        bg="red").grid(row=4, column=1, sticky="ew")
+        check = Button(self.rpage, text="Entregar ahora", command=self.evaluate, font=("Calibri", "12", "bold"), fg="whitesmoke",
+        bg="green").grid(row=2, column=0, sticky="ew")
+        cancel = Button(self.rpage, text="Cancelar", command=self.reg_cancel, font=("Calibri", "12", "bold"), fg="whitesmoke",
+        bg="red").grid(row=2, column=1, sticky="ew")
 
     def loop(self) -> None:
         "start looping over the Tk root. Use this when the Tk is not available outside the class."
@@ -212,7 +222,11 @@ Revise los datos introducidos e intente de nuevo.
             return None
         # then, get the number prompt
         try:
-            reading = self.reading.get()
+            self.actual_odometer_read += self.per_unit.find_odometer_value(product)
+        except Exception as e:
+            messagebox.showerror("Error al operar el valor del odometro", "Verifique e intente de nuevo.")
+            return None
+        try:
             per_unit = self.per_unit.get(product)
             unit_count = self.unit_count.get()
         except (TclError, ValueError) as e:
@@ -224,7 +238,7 @@ Revise los datos introducidos e intente de nuevo.
         # done? redirect to self.update_db()
         if messagebox.askyesno("¿Seguir?", """¿Desea seguir con el proceso usando las variables definidas?
 (Este proceso no se puede deshacer)"""):
-            self.update_db(reading,
+            self.update_db(self.actual_odometer_read,
                            product,
                            vendor,
                            per_unit,
