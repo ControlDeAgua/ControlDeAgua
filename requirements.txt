@@ -1,4 +1,11 @@
+# these dependencies are used on the main code. These
+# are obligatory dependencies if you want to run
+# the Python distribution:
 cx_Freeze
-diddiparser>=1.1.1
 pillow
 colorama
+
+# we need DiddiParser on the
+# GitHub workflow. We'll try to
+# use the latest version as we can.
+diddiparser>=1.2.1
