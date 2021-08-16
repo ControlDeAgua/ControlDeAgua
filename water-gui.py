@@ -197,6 +197,10 @@ Si le parece haber hallado un error, reportelo a:
 
 (Error: '{str(e)}')""")
             return None
+    
+    def no_entry(self, p: str, v: str, u: float) -> str:
+        "register a sale, but not a monetary entry."
+        return str(NotImplemented)
 
     def evaluate(self) -> None:
         "get sure everything is all right. After this point is correctly done you will be redirected to self.update_db()"
@@ -238,11 +242,19 @@ Revise los datos introducidos e intente de nuevo.
         # done? redirect to self.update_db()
         if messagebox.askyesno("¿Seguir?", """¿Desea seguir con el proceso usando las variables definidas?
 (Este proceso no se puede deshacer)"""):
+            if messagebox.askyesno("¿Registrar cobro?", """¿Desea registrar un ingreso al negocio por el producto tomado?
+
+Si no, se le va a redirigir a una pagina para
+que explique sus motivos."""):
+                reason = self.no_entry(product, vendor, unit_count)
+            else:
+                reason = "N/A"
             self.update_db(self.actual_odometer_read,
                            product,
                            vendor,
                            per_unit,
-                           unit_count)
+                           unit_count,
+                           reason)
 
     def goto(self, target: str) -> None:
         "redirect to any point of the GUI"
