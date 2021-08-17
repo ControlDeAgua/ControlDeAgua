@@ -57,7 +57,8 @@ CREATE TABLE IF NOT EXISTS Prompt (
     product_id      INTEGER,
     odometer_read   INTEGER,
     cost            INTEGER,
-    datetime        TEXT
+    datetime        TEXT,
+    noentry_reason  TEXT
 );
 
 CREATE TABLE IF NOT EXISTS Products (
