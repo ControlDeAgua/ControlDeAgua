@@ -27,8 +27,8 @@ gui_base = None
 if sys.platform == "win32": gui_base = "Win32GUI"
 
 exe = [Executable("water-gui.py",
-                 target_name="Control de Agua.exe",
-                 base=gui_base),
+                  target_name="Control de Agua.exe",
+                  base=gui_base),
        Executable("delete-db.py",
                   target_name="Eliminar archivo SQLite.exe",
                   base=gui_base),
@@ -39,7 +39,7 @@ exe = [Executable("water-gui.py",
                   target_name="Cambiar clave de administrador.exe")]
 
 setup(name="Control de Agua - MX",
-      version="1.0.0",
+      version="1.0",  # just like a... patch?
       description="""Esta es una aplicacion para manejar
 la venta de garrafones en una base de datos
 privada mediante una interfaz simple pero

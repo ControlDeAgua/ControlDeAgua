@@ -108,9 +108,12 @@ y privilegios del administrador.""")
         # view a report
         view_report = Button(self.welcome, text="Ver registro de ventas", bg="whitesmoke", fg="black",
         font=("Calibri", "14", "bold"), command=lambda: self.go("view registry")).grid(row=3, column=0, sticky="ew")
+        # docs button
+        view_docs = Button(self.welcome, text="Ver el instructivo en linea", bg="whitesmoke", fg="black",
+        font=("Calibri", "14", "bold"), command=lambda: startfile("https://controldeagua.github.io/ControlDeAgua-docs")).grid(row=4, column=0, sticky="ew")
         # exit button
         get_out = Button(self.welcome, text="Salir de la pagina", bg="red", fg="white",
-        font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=4, column=0, sticky="ew")
+        font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=5, column=0, sticky="ew")
 
     def reg_page(self) -> None:
         "generate a register page."
