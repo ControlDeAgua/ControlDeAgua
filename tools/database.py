@@ -92,7 +92,7 @@ def deleteDatabase(p: str, c: sqlite3.Connection, cc: sqlite3.Cursor) -> None:
     c.close()
     _destroy_db(p, c, cc)
 
-def buildInstertionCommand(conn, cur, read: float, client: str, vendor: str, unit_c: float, units: float) -> None:
+def buildInstertionCommand(conn, cur, read: float, client: str, vendor: str, unit_c: float, units: float, reason: str) -> None:
     "format and test the values to run a clean argument for execute()/executescript()."
     # calculate the cost
     try:
@@ -115,8 +115,8 @@ favor de reportarlo en http://github.com/ControlDeAgua/ControldeAgua/issues/new"
     # (we are automattically adding a datetime,
     # as a security add-on)
     cur.execute("""INSERT INTO Prompt
-        (vendor_id, product_id, odometer_read, cost, datetime) VALUES ( ?, ?, ?, ?, ? )""",
-        (vendor_id, client_id, read, total_cost, datetime.today().strftime("%B %d, %Y %H:%M:%S")))
+        (vendor_id, product_id, odometer_read, cost, datetime) VALUES ( ?, ?, ?, ?, ?, ? )""",
+        (vendor_id, client_id, read, total_cost, datetime.today().strftime("%B %d, %Y %H:%M:%S"), reason))
     conn.commit()
 
 def get_product_dict() -> Dict[str, float]:

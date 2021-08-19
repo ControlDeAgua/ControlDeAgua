@@ -197,6 +197,18 @@ Si le parece haber hallado un error, reportelo a:
 
 (Error: '{str(e)}')""")
             return None
+    
+    def no_entry(self, p: str, v: str, u: float) -> str:
+        "register a sale, but not a monetary entry."
+        ask_for_reason = ReasonEntry()
+        ask_for_reason.loop()
+        while 1:
+            if ask_for_reason.is_completed():
+                # mission accomplished! get the entry,
+                # format and then return
+                msg = f"El producto '{p}' (cantidad: {u}) fue tomado por {v}, pero sin ingresos, por la razon: '{ask_for_reason.get_msg()}'"
+                break
+        return msg
 
     def evaluate(self) -> None:
         "get sure everything is all right. After this point is correctly done you will be redirected to self.update_db()"
@@ -238,11 +250,19 @@ Revise los datos introducidos e intente de nuevo.
         # done? redirect to self.update_db()
         if messagebox.askyesno("¿Seguir?", """¿Desea seguir con el proceso usando las variables definidas?
 (Este proceso no se puede deshacer)"""):
+            if messagebox.askyesno("¿Registrar cobro?", """¿Desea registrar un ingreso al negocio por el producto tomado?
+
+Si no, se le va a redirigir a una pagina para
+que explique sus motivos."""):
+                reason = self.no_entry(product, vendor, unit_count)
+            else:
+                reason = "N/A"
             self.update_db(self.actual_odometer_read,
                            product,
                            vendor,
                            per_unit,
-                           unit_count)
+                           unit_count,
+                           reason)
 
     def goto(self, target: str) -> None:
         "redirect to any point of the GUI"
@@ -273,7 +293,8 @@ Revise los datos introducidos e intente de nuevo.
                   client: str,      # client name
                   vendor: str,      # vendor name
                   per_unit: float,  # cost per unit
-                  units: float      # units
+                  units: float,     # units
+                  reason: str       # why aren't you giving money?
     ) -> None:
         "update the SQLite database and return to the home page."
         # update the SQL
@@ -284,7 +305,8 @@ Revise los datos introducidos e intente de nuevo.
                                    client,
                                    vendor,
                                    per_unit,
-                                   units)
+                                   units,
+                                   reason)
             # (the function above will format the arguments into a cleaner command,
             # it will run and then save the changes)
         except Exception as e:
