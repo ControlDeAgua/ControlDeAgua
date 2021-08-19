@@ -200,7 +200,15 @@ Si le parece haber hallado un error, reportelo a:
     
     def no_entry(self, p: str, v: str, u: float) -> str:
         "register a sale, but not a monetary entry."
-        return str(NotImplemented)
+        ask_for_reason = ReasonEntry()
+        ask_for_reason.loop()
+        while 1:
+            if ask_for_reason.completed:
+                # mission accomplished! get the entry,
+                # format and then return
+                msg = f"El producto '{p}' (cantidad: {u}) fue tomado por {v}, pero sin ingresos, por la razon: '{ask_for_reason.get_msg()}'"
+                break
+        return msg
 
     def evaluate(self) -> None:
         "get sure everything is all right. After this point is correctly done you will be redirected to self.update_db()"
@@ -285,7 +293,8 @@ que explique sus motivos."""):
                   client: str,      # client name
                   vendor: str,      # vendor name
                   per_unit: float,  # cost per unit
-                  units: float      # units
+                  units: float,     # units
+                  reason: str       # why aren't you giving money?
     ) -> None:
         "update the SQLite database and return to the home page."
         # update the SQL
@@ -296,7 +305,8 @@ que explique sus motivos."""):
                                    client,
                                    vendor,
                                    per_unit,
-                                   units)
+                                   units,
+                                   reason)
             # (the function above will format the arguments into a cleaner command,
             # it will run and then save the changes)
         except Exception as e:
