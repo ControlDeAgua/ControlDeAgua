@@ -147,7 +147,7 @@ Verifique e intente de nuevo.
 (Error: '{str(exc)}')""")
             return None
         # run directly the SQL command to get the storage
-        CUR.execute("SELECT vendor_id, product_id, odometer_read, cost, datetime FROM Prompt WHERE datetime >= ( ? ) AND datetime <= ( ? )", ( date_a, date_b ))
+        CUR.execute("SELECT vendor_id, product_id, odometer_read, cost, datetime, noentry_reason FROM Prompt WHERE datetime >= ( ? ) AND datetime <= ( ? )", ( date_a, date_b ))
         finale = CUR.fetchall()
         # analyze and translate
         finale_str = "\n"
@@ -155,19 +155,22 @@ Verifique e intente de nuevo.
         vendors_operator = {}
         final_cost = 0
         final_odometer = 0
-        for v, p, o, c, d in finale:
+        for v, p, o, c, d, r in finale:
             # translate some IDs
             CUR.execute("SELECT name FROM Vendors WHERE id == ( ? )", ( v, ))
             v = CUR.fetchone()[0]
             CUR.execute("SELECT name FROM Products WHERE id == ( ? )", ( p, ))
             p = CUR.fetchone()[0]
             # map some of the data
+            noentry_msg = ""
+            if r != "N/A":
+                noentry_msg = f"ATENCION: {r}"
             final_cost += int(c)
             final_odometer += int(o)
             products_operator[p] = products_operator.get(p, 0) + 1
             vendors_operator[v] = vendors_operator.get(v, 0) + 1
             # build a string to report
-            add_on = "·"*60 + "\n" + f"- Fecha: {d}\n" + f"- Vendedor: {v}\n" + f"- Producto: {p}\n" + f"- Lectura del odometro registrada: {o}\n" + f"- Costo: ${c}\n"
+            add_on = "·"*60 + f"{noentry_msg}\n" + f"- Fecha: {d}\n" + f"- Vendedor: {v}\n" + f"- Producto: {p}\n" + f"- Lectura del odometro registrada: {o}\n" + f"- Costo: ${c}\n"
             finale_str += add_on
         intro = f"VENTAS DESDE '{date_a}' HASTA '{date_b}'\n" + "="*60 + "\n- Vendedores: "
         for vendor in vendors_operator.keys():
