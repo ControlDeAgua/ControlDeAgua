@@ -203,7 +203,7 @@ Si le parece haber hallado un error, reportelo a:
         ask_for_reason = ReasonEntry()
         ask_for_reason.loop()
         while 1:
-            if ask_for_reason.completed:
+            if ask_for_reason.is_completed():
                 # mission accomplished! get the entry,
                 # format and then return
                 msg = f"El producto '{p}' (cantidad: {u}) fue tomado por {v}, pero sin ingresos, por la razon: '{ask_for_reason.get_msg()}'"
