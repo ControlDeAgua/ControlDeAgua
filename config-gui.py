@@ -154,7 +154,8 @@ Verifique e intente de nuevo.
         products_operator = {}
         vendors_operator = {}
         final_cost = 0
-        final_odometer = 0
+        initial_odometer = finale[0][2]
+        final_odometer = finale[len(finale) - 1][2]
         for v, p, o, c, d, r in finale:
             # translate some IDs
             CUR.execute("SELECT name FROM Vendors WHERE id == ( ? )", ( v, ))
@@ -166,7 +167,6 @@ Verifique e intente de nuevo.
             if r != "N/A":
                 noentry_msg = f"ATENCION: {r}"
             final_cost += int(c)
-            final_odometer += int(o)
             products_operator[p] = products_operator.get(p, 0) + 1
             vendors_operator[v] = vendors_operator.get(v, 0) + 1
             # build a string to report
@@ -193,7 +193,7 @@ Verifique e intente de nuevo.
         if intro.endswith(", "):
             intro = intro[:len(intro) - 1]
         intro += "\n" + f"- Cantidad total vendida de productos: {howmany_sales}"
-        intro += "\n" + f"- Costo total: {final_cost}\n- Lectura final del odometro: {final_odometer}"
+        intro += "\n" + f"- Costo total: {final_cost}\n-Lectura inicial del odometro: {initial_odometer}\n- Lectura final del odometro: {final_odometer}"
         # show the final product
         finale_str = intro + "\n\n" + "*"*60 + finale_str
         view_text(self.root, "Registro de ventas", finale_str)
