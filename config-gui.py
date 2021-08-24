@@ -117,6 +117,23 @@ y privilegios del administrador.""")
         # exit button
         get_out = Button(self.welcome, text="Salir de la pagina", bg="red", fg="white",
         font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=6, column=0, sticky="ew")
+    
+    def del_user_internal(self) -> None:
+        "internal deletion for the selected user (self.del_name)"
+    
+    def del_user_page(self) -> None:
+        "remove a user from the list."
+        self.del_page = Frame()
+        self.del_page.grid()
+        self.del_name = StringVar()
+        name_l = Label(self.del_page, text="Introduzca nombre completo (sin acentos):", font=("Calibri", "13", "bold"), bg="whitesmoke",
+        fg="black").grid(row=0, column=0, sticky="ew")
+        name_e = Entry(self.del_page, width=30, textvariable=self.new_name,
+        font=("Calibri", "13", "normal")).grid(row=0, column=1, sticky="ew")
+        cancel = Button(self.del_page, text="Cancelar", font=("Calibri", "13", "bold"), bg="gray", fg="white",
+        command=lambda: self.go("del_user -> home")).grid(row=1, column=0, sticky="ew")
+        go_ahead = Button(self.del_page, text="Eliminar", font=("Calibri", "13", "bold"), bg="red", fg="white",
+        command=lambda: self.del_user_internal).grid(row=1, column=1, sticky="ew")
 
     def reg_page(self) -> None:
         "generate a register page."
@@ -239,6 +256,7 @@ Verifique e intente de nuevo.
             to_save[0][new_usr.lower()] = new_id
             with open("C:/Program Files/Control de Agua/tools/users.json", "w") as f:
                 f.write(json.dumps(to_save[0]))
+                f.close()
         except Exception as e:
             if len(open("C:/Program Files/Control de Agua/tools/users.json", "r").read().strip()) < 1:
                 open("C:/Program Files/Control de Agua/tools/users.json", "w").write("{}")
@@ -281,6 +299,12 @@ Datos del registro:
             self.see_registry()
         elif arg == "registry_view -> home":
             self.sales_f.grid_remove()
+            self.menu()
+        elif arg == "home -> del_user":
+            self.welcome.grid_remove()
+            self.del_user_page()
+        elif arg == "del_user -> home":
+            self.del_page.grid_remove()
             self.menu()
         else:
             self.notDefined(arg)
