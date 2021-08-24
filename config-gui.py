@@ -120,6 +120,39 @@ y privilegios del administrador.""")
     
     def del_user_internal(self) -> None:
         "internal deletion for the selected user (self.del_name)"
+        if not messagebox.askyesno("¿Proceder?", """¿En verdad desea proceder con esta accion?
+(Una vez realizada la accion, ya no se podra acceder con esa cuenta,
+pero los registros a su nombre no se eliminan)"""):
+            return None
+        try:
+            selected_usr = self.del_name.get().strip()
+            if len(selected_usr) < 1: raise ValueError('Expected non-empty strings, got ""')
+            # update
+            to_save = {}
+            with open("C:/Program Files/Control de Agua/tools/users.json", "r") as f:
+                f_parsed = json.loads(f.read())
+                if selected_usr not in f_parsed: raise KeyError("El usuario no existe")
+                for k, v in f_parsed.items():
+                    if k == selected_usr:
+                        # don't save that user
+                        continue
+                    to_save[k] = v
+            with open("C:/Program Files/Control de Agua/tools/users.json", "w") as wf:
+                wf.write(json.dumps(to_save))
+        except Exception as e:
+            if len(open("C:/Program Files/Control de Agua/tools/users.json", "r").read().strip()) < 1:
+                open("C:/Program Files/Control de Agua/tools/users.json", "w").write("{}")
+            messagebox.showerror("Error al registrar", f"""Ha sucedido un error al retirar al usuario. Puede que
+haya dejado la entrada totalmente vacia o haya agregado algun caracter no
+permitido. Verifique e intente de nuevo.
+
+(Error: '{str(e)}')""")
+            return None
+        # success message
+        messagebox.showinfo("Eliminacion completada", f"""Se ha eliminado con exito al usuario
+'{selected_usr}' del registro de usuarios.""")
+        self.go("del_user -> home")
+
     
     def del_user_page(self) -> None:
         "remove a user from the list."
