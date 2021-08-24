@@ -102,18 +102,21 @@ y privilegios del administrador.""")
         # user registry function
         new_usr = Button(self.welcome, text="Nuevo usuario", bg="whitesmoke", fg="black", font=("Calibri", "14", "bold"),
         command=lambda: self.go("home -> register")).grid(row=1, column=0, sticky="ew")
+        # remove a user
+        del_usr = Button(self.welcome, text="Eliminar usuario", bg="whitesmoke", fg="black", font=("Calibri", "14", "bold"),
+        command=lambda: self.go("home -> del_user")).grid(row=2, column=0, sticky="ew")
         # view the registered users
         view_usrs = Button(self.welcome, text="Ver lista de usuarios", bg="whitesmoke", fg="black",
-        font=("Calibri", "14", "bold"), command=lambda: self.go("view users")).grid(row=2, column=0, sticky="ew")
+        font=("Calibri", "14", "bold"), command=lambda: self.go("view users")).grid(row=3, column=0, sticky="ew")
         # view a report
         view_report = Button(self.welcome, text="Ver registro de ventas", bg="whitesmoke", fg="black",
-        font=("Calibri", "14", "bold"), command=lambda: self.go("view registry")).grid(row=3, column=0, sticky="ew")
+        font=("Calibri", "14", "bold"), command=lambda: self.go("view registry")).grid(row=4, column=0, sticky="ew")
         # docs button
         view_docs = Button(self.welcome, text="Ver el instructivo en linea", bg="whitesmoke", fg="black",
-        font=("Calibri", "14", "bold"), command=lambda: startfile("https://controldeagua.github.io/ControlDeAgua-docs")).grid(row=4, column=0, sticky="ew")
+        font=("Calibri", "14", "bold"), command=lambda: startfile("https://controldeagua.github.io/ControlDeAgua-docs")).grid(row=5, column=0, sticky="ew")
         # exit button
         get_out = Button(self.welcome, text="Salir de la pagina", bg="red", fg="white",
-        font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=5, column=0, sticky="ew")
+        font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=6, column=0, sticky="ew")
 
     def reg_page(self) -> None:
         "generate a register page."
