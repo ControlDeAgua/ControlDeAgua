@@ -114,9 +114,12 @@ y privilegios del administrador.""")
         # docs button
         view_docs = Button(self.welcome, text="Ver el instructivo en linea", bg="whitesmoke", fg="black",
         font=("Calibri", "14", "bold"), command=lambda: startfile("https://controldeagua.github.io/ControlDeAgua-docs")).grid(row=5, column=0, sticky="ew")
+        # manage the product info
+        manage_product = Button(self.welcome, text="Manejar la informacion de producto", bg="whitesmoke", fg="black",
+        font=("Calibri", "14", "bold"), command=lambda: self.go("manage product info")).grid(row=6, column=0, sticky="ew")
         # exit button
         get_out = Button(self.welcome, text="Salir de la pagina", bg="red", fg="white",
-        font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=6, column=0, sticky="ew")
+        font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=7, column=0, sticky="ew")
     
     def del_user_internal(self) -> None:
         "internal deletion for the selected user (self.del_name)"
@@ -339,6 +342,14 @@ Datos del registro:
         elif arg == "del_user -> home":
             self.del_page.grid_remove()
             self.menu()
+        elif arg == "manage product info":
+            # this is quite harder than the others. Actually,
+            # this command is redirecting to another
+            # executable file (or the Python file, if we can).
+            # We are not changing anything from the GUI, we are
+            # just giving an advice (tkinter.messagebox.showinfo)
+            messagebox.showinfo("Aviso", """Se le redirigira a otra
+aplicacion para esta funcion. EN un momento debe abrirse.""")
         else:
             self.notDefined(arg)
 
