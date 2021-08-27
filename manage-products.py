@@ -1,6 +1,7 @@
 "Separate GUI to manage the product info."
 
 import json
+from idlelib.textview import view_text
 from tkinter import *
 from tkinter import messagebox
 from tools.database import get_product_dict
@@ -31,6 +32,7 @@ class ProductManager:
         method manually. This is only used to re-force the
         product info).
         """
+        del(self.product_dict)
         self.product_dict = get_product_dict()
     
     def main_menu(self) -> None:
@@ -81,6 +83,15 @@ para poder ver los cambios realizados.
     def move_to_option(self, origin: str, dest: str) -> None:
         "Move between frames."
         result = (origin, dest)
+        # redirect
+        if result == ("home", "show"):
+            # an easy one: just show the product list
+            text = ""
+            for k, v in self.product_dict:
+                text += f"{'='*60}\n- Producto: {k}\n- Valor monetario: ${v[0]}\n- Valor en la cuenta del odometro: {v[1]}\n"
+            view_text("Lista de productos registrados", text)
+            del(text)
+            return None
 
 if __name__ == "__main__":
     # main level execution
