@@ -5,6 +5,7 @@ from idlelib.textview import view_text
 from tkinter import *
 from tkinter import messagebox
 from tools.database import get_product_dict
+from tools.prefabricated import get_menubutton
 
 class ProductManager:
     """
@@ -67,6 +68,9 @@ en las operaciones de venta y reporte.""", font=("Calibri", "14", "bold"), bg="w
         exit = Button(self.menu_frame, text="Salir", fg="white", bg="red",
         font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=5, column=0, sticky="ew")
     
+    def manage(self) -> None:
+        "manage a product."
+    
     def loop(self) -> None:
         "run self.root.mainloop() from the class."
         self.root.mainloop()
@@ -92,6 +96,9 @@ para poder ver los cambios realizados.
             view_text("Lista de productos registrados", text)
             del(text)
             return None
+        elif result == ("home", "manage"):
+            self.menu_frame.grid_remove()
+            self.manage()
 
 if __name__ == "__main__":
     # main level execution
