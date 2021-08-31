@@ -25,6 +25,12 @@ def get_listbox(
     "row", "column" and "sticky" are just arguments for
     the grid() method applied to the list box object.
     """
+    messagebox.showwarning("Advertencia", f"""Se ha detectado el uso obsoleto de un widget. Si no es el creador del
+producto, por favor reportelo al desarrollador de inmediato.
+
+(Widget creado: 'tkinter.Listbox')
+(Metodo utilizado: 'tools.prefabicated.get_listbox' - mediante 'Control de Agua')
+(Tipo de advertencia: Metodo reemplazado)""")
     def get_type(req: str) -> type:
         "function to get a type from undefined classes (I mean, defined on a function - but not imported)."
         if req == "dict_keys":
