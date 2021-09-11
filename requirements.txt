@@ -8,4 +8,4 @@ colorama==0.4.4
 # we need DiddiParser on the
 # GitHub workflow. We'll try to
 # use the latest version as we can.
-diddiparser==1.1
+diddiparser==1.3
