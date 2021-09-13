@@ -99,6 +99,10 @@ para poder ver los cambios realizados.
         elif result == ("home", "manage"):
             self.menu_frame.grid_remove()
             self.manage()
+        else:
+            # no results? you should say it
+            messagebox.showwarning("NotImplemented Error", f"""La opcion del menu no fue identificada: {result}.
+Comuniquese con el desarrollador para manejar esta incompatibilidad.""")
 
 if __name__ == "__main__":
     # main level execution
