@@ -11,3 +11,9 @@ updates:
       interval: "daily"
       time: "09:30"
       timezone: "America/Mexico_City"
+  - package-ecosystem: "pip" # Pip dependencies
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "daily"
+      time: "09:30"
+      timezone: "America/Mexico_City"
