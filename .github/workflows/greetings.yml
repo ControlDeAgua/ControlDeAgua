@@ -4,7 +4,6 @@ on: [pull_request, issues]
 
 jobs:
   greeting:
-    if: github.user != "dependabot"
     runs-on: ubuntu-latest
     permissions:
       issues: write
