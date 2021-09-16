@@ -6,5 +6,15 @@
    product it is a real Ramz Editions creation.
 */
 
+/*
+   Specifications for "Control de Agua"
+   ====================================
+   
+   This file only works as a marker here, but we
+   added DiddiParser as a dependency, to keep the
+   control.
+*/
+
+!# Specify the meta
 RamzProductName = "Control de Agua";                   !# Product name
 RamzProductDir = "C:/Program Files/Control de Agua";   !# Product direction
