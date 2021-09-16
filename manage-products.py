@@ -70,7 +70,15 @@ en las operaciones de venta y reporte.""", font=("Calibri", "14", "bold"), bg="w
     
     def manage(self) -> None:
         "manage a product."
-    
+        self.manage_frame = Frame(self.root)
+        self.manage_frame.grid()
+        # add a manage_product function
+        def manage_product():
+            self.go("manage", "home")
+        # add abels and menubuttons
+        l = Label(self.manage_frame, text="Elija un producto:", bg="whitesmoke", fg="black",
+        font=("Calibri", "13", "bold")).grid(row=0, column=0, sticky="ew")
+
     def loop(self) -> None:
         "run self.root.mainloop() from the class."
         self.root.mainloop()
@@ -99,6 +107,9 @@ para poder ver los cambios realizados.
         elif result == ("home", "manage"):
             self.menu_frame.grid_remove()
             self.manage()
+        elif result == ("manage", "home"):
+            self.manage_frame.grid_remove()
+            self.main_menu()
         else:
             # no results? you should say it
             messagebox.showwarning("NotImplemented Error", f"""La opcion del menu no fue identificada: {result}.
