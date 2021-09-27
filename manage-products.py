@@ -112,6 +112,38 @@ Verifique sus entradas e intente de nuevo.""")
     def delete(self) -> None:
         "interface to delete an item."
         self.delete_frame = Frame(self.root)
+        self.delete_frame.grid()
+        self.delete_selection = IntVar()
+        self.delete_options = self.product_dir.get_list()
+        # remove an item and save
+        def delete_item():
+            try:
+                target = self.product_dict.product_index[self.manage_selection.get()]
+                new = {}
+                for k in self.product_dict.products:
+                    if k == target: continue
+                    new[k] = self.product_dict.products[v]
+                with open("C:/Program Files/Control de Agua/tools/products.json", "w") as f:
+                    f.write(json.dump(new))
+            except Exception as e:
+                messagebox.showerror("Error", f"""{type(e).__name__}: {str(e)}
+
+Verifique sus entradas e intente de nuevo.""")
+                self.move_to_option("delete", "RETRY")
+            self.finish_message("delete")
+            self.move_to_option("delete", "home")
+        l = Label(self.delete_frame, text="Seleccione el articulo a eliminar:", font=("Calibri", "13", "bold"),
+        fg="black", bg="whitesmoke").grid(row=0, column=0, sticky="ew")
+        entry = get_menubutton(self.delete_frame,
+                               self.delete_options,
+                               self.delete_selection,
+                               row=0,
+                               column=1,
+                               sticky="ew")
+        cancel = Button(self.delete_frame, text="Cancelar", bg="red", fg="whitesmoke",
+        command=lambda: self.move_to_option("delete", "home"), font=("Calibri", "13", "bold")).grid(row=1, column=0, sticky="ew")
+        go_for_it = Button(self.delete_frame, text="Eliminar elemento", bg="cyan", fg="whitesmoke", font=("Calibri", "13", "bold"),
+        command=delete_item).grid(row=1, column=1, sticky="ew")
 
     def loop(self) -> None:
         "run self.root.mainloop() from the class."
@@ -153,6 +185,10 @@ para poder ver los cambios realizados.
         elif result == ("delete", "home"):
             self.delete_frame.grid_remove()
             self.main_menu()
+        elif result == ("delete", "RETRY"):
+            # retry the "delete" option
+            self.reload_product_info()
+            self.delete()
         else:
             # no results? you should say it
             messagebox.showwarning("NotImplemented Error", f"""La opcion del menu no fue identificada: {result}.
