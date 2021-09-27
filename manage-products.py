@@ -108,6 +108,10 @@ Verifique sus entradas e intente de nuevo.""")
         command=lambda:self.move_to_option("manage", "home")).grid(row=2, column=0, sticky="ew")
         move_it = Button(self.manage_frame, text="Modificar", bg="cyan",  # i decided to use cyan instead of green!
         fg="whitesmoke", command=manage_product).grid(row=2, column=1, sticky="ew")
+    
+    def delete(self) -> None:
+        "interface to delete an item."
+        self.delete_frame = Frame(self.root)
 
     def loop(self) -> None:
         "run self.root.mainloop() from the class."
@@ -143,6 +147,12 @@ para poder ver los cambios realizados.
             # retry the "manage" operations
             self.reload_product_info()
             self.manage()
+        elif result == ("home", "delete"):
+            self.menu_frame.grid_remove()
+            self.delete()
+        elif result == ("delete", "home"):
+            self.delete_frame.grid_remove()
+            self.main_menu()
         else:
             # no results? you should say it
             messagebox.showwarning("NotImplemented Error", f"""La opcion del menu no fue identificada: {result}.
