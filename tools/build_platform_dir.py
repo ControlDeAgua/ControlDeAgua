@@ -26,6 +26,7 @@ def identify_dir(py_name: str, exe_name: str) -> Optional[str]:
     win_platforms = ["win32", "win-amd64"]
     found_dir = False
     current_path = "C:/Program Files/Control de Agua"
+    found_path = ""
     for version in python_versions:
         formatted_version = get_str_python_version(version)
         for platform in win_platforms:
