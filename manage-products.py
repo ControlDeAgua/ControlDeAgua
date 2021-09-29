@@ -148,6 +148,41 @@ Verifique sus entradas e intente de nuevo.""")
     def create(self) -> None:
         "create an item."
         self.create_frame = Frame(self.root)
+        self.create_frame.grid()
+        self.create_selection = StringVar()
+        self.create_new_value = DoubleVar()
+        self.create_odo_value = DoubleVar()
+        self.create_options = self.product_dir.get_list()
+        # add a create_product function
+        def create_product():
+            try:
+                target, money_value, odo_value = self.create_selection.get(), self.create_new_value.get(), self.create_odo_value.get()
+                if target in self.product_dict.products.keys():
+                    raise ValueError(f"El valor '{target}' ya existe. Mejor utilice la funcion de manejo.")
+                self.product_dict.products[target] = [money_value, odo_value]
+                with open("C:/Program Files/Control de Agua/tools/products.json", "w") as f:
+                    f.write(json.dump(self.product_dict.products))
+            except Exception as e:
+                messagebox.showerror("Error", f"""{type(e).__name__}: '{str(e)}'
+
+Verifique sus entradas e intente de nuevo.""")
+                self.move_to_option("create", "RETRY")
+            self.finish_message("create")
+            self.move_to_option("create", "home")
+        # add labels and menubuttons
+        l = Label(self.create_frame, text="1. Introduzca el nuevo producto:", bg="whitesmoke", fg="black",
+        font=("Calibri", "13", "bold")).grid(row=0, column=0, sticky="ew")
+        new_opt = Entry(self.create_frame, textvariable=self.create_selection, width=40).grid(row=0, coulmn=1, sticky="ew")
+        l1 = Label(self.create_frame, text="2. Introduzca el valor de odometro:", bg="whitesmoke", fg="black",
+        font=("Calibri", "13", "bold")).grid(row=1, column=0, sticky="ew")
+        new_odo = Entry(self.create_frame, textvariable=self.create_odo_value, width=40).grid(row=1, coulmn=1, sticky="ew")
+        l2 = Label(self.create_frame, text="3. Introduzca un valor para reemplazar (pesos mexicanos):", bg="whitesmoke",
+        fg="black", font=("Calibri", "13", "bold")).grid(row=2, column=0, sticky="ew")
+        new_value = Entry(self.create_frame, textvariable=self.create_new_value, width=40).grid(row=2, column=1, sticky="ew")
+        cancel = Button(self.create_frame, text="Cancelar", bg="red", fg="whitesmoke",
+        command=lambda:self.move_to_option("create", "home")).grid(row=3, column=0, sticky="ew")
+        move_it = Button(self.create_frame, text="Modificar", bg="cyan",  # i decided to use cyan instead of green!
+        fg="whitesmoke", command=create_product).grid(row=3, column=1, sticky="ew")
 
     def loop(self) -> None:
         "run self.root.mainloop() from the class."
