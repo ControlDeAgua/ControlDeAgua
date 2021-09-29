@@ -78,12 +78,13 @@ en las operaciones de venta y reporte.""", font=("Calibri", "14", "bold"), bg="w
         self.manage_frame.grid()
         self.manage_selection = IntVar()
         self.manage_new_value = DoubleVar()
+        self.manage_odo_value = DoubleVar()
         self.manage_options = self.product_dir.get_list()
         # add a manage_product function
         def manage_product():
             try:
-                target, value = self.product_dict.product_index[self.manage_selection.get()], self.manage_new_value.get()
-                self.product_dict.products[target] = value
+                target, m_value, o_value = self.product_dict.product_index[self.manage_selection.get()], self.manage_new_value.get(), self.manage_odo_value.get()
+                self.product_dict.products[target] = [m_value, o_value]
                 with open("C:/Program Files/Control de Agua/tools/products.json", "w") as f:
                     f.write(json.dump(self.product_dict.products))
             except Exception as e:
@@ -101,13 +102,16 @@ Verifique sus entradas e intente de nuevo.""")
                               self.manage_selection,
                               row=0,
                               column=1)
+        l1 = Label(self.manage_frame, text="2. Introduzca el valor de odometro:", bg="whitesmoke", fg="black",
+        font=("Calibri", "13", "bold")).grid(row=1, column=0, sticky="ew")
+        new_odo = Entry(self.manage_frame, textvariable=self.manage_odo_value, width=40).grid(row=1, coulmn=1, sticky="ew")
         l2 = Label(self.manage_frame, text="2. Introduzca un valor para reemplazar (pesos mexicanos):", bg="whitesmoke",
-        fg="black", font=("Calibri", "13", "bold")).grid(row=1, column=0, sticky="ew")
-        new_value = Entry(self.manage_frame, textvariable=self.manage_new_value, width=40).grid(row=1, column=1, sticky="ew")
+        fg="black", font=("Calibri", "13", "bold")).grid(row=2, column=0, sticky="ew")
+        new_value = Entry(self.manage_frame, textvariable=self.manage_new_value, width=40).grid(row=2, column=1, sticky="ew")
         cancel = Button(self.manage_frame, text="Cancelar", bg="red", fg="whitesmoke",
-        command=lambda:self.move_to_option("manage", "home")).grid(row=2, column=0, sticky="ew")
+        command=lambda:self.move_to_option("manage", "home")).grid(row=3, column=0, sticky="ew")
         move_it = Button(self.manage_frame, text="Modificar", bg="cyan",  # i decided to use cyan instead of green!
-        fg="whitesmoke", command=manage_product).grid(row=2, column=1, sticky="ew")
+        fg="whitesmoke", command=manage_product).grid(row=3, column=1, sticky="ew")
     
     def delete(self) -> None:
         "interface to delete an item."
@@ -230,6 +234,13 @@ para poder ver los cambios realizados.
             self.delete()
         elif result == ("home", "create"):
             self.menu_frame.grid_remove()
+            self.create()
+        elif result == ("create", "home"):
+            self.create_frame.grid_remove()
+            self.main_menu()
+        elif result == ("create", "RETRY"):
+            # retry the "create"
+            self.reload_product_info()
             self.create()
         else:
             # no results? you should say it
