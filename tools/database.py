@@ -120,7 +120,10 @@ favor de reportarlo en http://github.com/ControlDeAgua/ControldeAgua/issues/new"
     conn.commit()
 
 def get_product_dict() -> Dict[str, float]:
-    return json.loads(open("C://Program Files/Control de Agua/tools/products.json").read())
+    f = open("C://Program Files/Control de Agua/tools/products.json")
+    contents = json.loads(f.read())
+    f.close()
+    return contents
 
 class ProductMap:
     """
