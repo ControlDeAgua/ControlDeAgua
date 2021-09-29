@@ -8,8 +8,10 @@ import json
 from tkinter import *
 from tkinter import messagebox
 from idlelib.textview import view_text
+from tools.build_platform_dir import identify_dir
 from tools.database import *
 from tools.datetimes import compare_dates
+from tools.panic import panic_msg
 from tools.prefabricated import get_menubutton
 from tools.windowmanager import *
 from tools.users import check, get_admin_pwd
@@ -80,6 +82,7 @@ y privilegios del administrador.""")
         except Exception as e:
             if len(open("C:/Program Files/Control de Agua/tools/users.json", "r").read().strip()) < 1:
                 open("C:/Program Files/Control de Agua/tools/users.json", "w").write("{}")
+                panic_msg(e)
             else:
                 messagebox.showwarning("?", f"error: {str(e)}")
         s = ""
@@ -102,18 +105,76 @@ y privilegios del administrador.""")
         # user registry function
         new_usr = Button(self.welcome, text="Nuevo usuario", bg="whitesmoke", fg="black", font=("Calibri", "14", "bold"),
         command=lambda: self.go("home -> register")).grid(row=1, column=0, sticky="ew")
+        # remove a user
+        del_usr = Button(self.welcome, text="Eliminar usuario", bg="whitesmoke", fg="black", font=("Calibri", "14", "bold"),
+        command=lambda: self.go("home -> del_user")).grid(row=2, column=0, sticky="ew")
         # view the registered users
         view_usrs = Button(self.welcome, text="Ver lista de usuarios", bg="whitesmoke", fg="black",
-        font=("Calibri", "14", "bold"), command=lambda: self.go("view users")).grid(row=2, column=0, sticky="ew")
+        font=("Calibri", "14", "bold"), command=lambda: self.go("view users")).grid(row=3, column=0, sticky="ew")
         # view a report
         view_report = Button(self.welcome, text="Ver registro de ventas", bg="whitesmoke", fg="black",
-        font=("Calibri", "14", "bold"), command=lambda: self.go("view registry")).grid(row=3, column=0, sticky="ew")
+        font=("Calibri", "14", "bold"), command=lambda: self.go("view registry")).grid(row=4, column=0, sticky="ew")
         # docs button
         view_docs = Button(self.welcome, text="Ver el instructivo en linea", bg="whitesmoke", fg="black",
-        font=("Calibri", "14", "bold"), command=lambda: startfile("https://controldeagua.github.io/ControlDeAgua-docs")).grid(row=4, column=0, sticky="ew")
+        font=("Calibri", "14", "bold"), command=lambda: startfile("https://controldeagua.github.io/ControlDeAgua-docs")).grid(row=5, column=0, sticky="ew")
+        # manage the product info
+        manage_product = Button(self.welcome, text="Manejar la informacion de producto", bg="whitesmoke", fg="black",
+        font=("Calibri", "14", "bold"), command=lambda: self.go("manage product info")).grid(row=6, column=0, sticky="ew")
         # exit button
         get_out = Button(self.welcome, text="Salir de la pagina", bg="red", fg="white",
-        font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=5, column=0, sticky="ew")
+        font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=7, column=0, sticky="ew")
+    
+    def del_user_internal(self) -> None:
+        "internal deletion for the selected user (self.del_name)"
+        if not messagebox.askyesno("¿Proceder?", """¿En verdad desea proceder con esta accion?
+(Una vez realizada la accion, ya no se podra acceder con esa cuenta,
+pero los registros a su nombre no se eliminan)"""):
+            return None
+        try:
+            selected_usr = self.del_name.get().strip()
+            if len(selected_usr) < 1: raise ValueError('Expected non-empty strings, got ""')
+            # update
+            to_save = {}
+            with open("C:/Program Files/Control de Agua/tools/users.json", "r") as f:
+                f_parsed = json.loads(f.read())
+                if selected_usr not in f_parsed: raise KeyError("El usuario no existe")
+                for k, v in f_parsed.items():
+                    if k == selected_usr:
+                        # don't save that user
+                        continue
+                    to_save[k] = v
+            with open("C:/Program Files/Control de Agua/tools/users.json", "w") as wf:
+                wf.write(json.dumps(to_save))
+        except Exception as e:
+            messagebox.showerror("Error al registrar", f"""Ha sucedido un error al retirar al usuario. Puede que
+haya dejado la entrada totalmente vacia o haya agregado algun caracter no
+permitido. Verifique e intente de nuevo.
+
+(Error: '{str(e)}')""")
+            if len(open("C:/Program Files/Control de Agua/tools/users.json", "r").read().strip()) < 1:
+                # probably, we couldn't write inside the file. So, we are going to push a panic message
+                open("C:/Program Files/Control de Agua/tools/users.json", "w").write("{}")
+                panic_msg(e)
+            return None
+        # success message
+        messagebox.showinfo("Eliminacion completada", f"""Se ha eliminado con exito al usuario
+'{selected_usr}' del registro de usuarios.""")
+        self.go("del_user -> home")
+
+    
+    def del_user_page(self) -> None:
+        "remove a user from the list."
+        self.del_page = Frame()
+        self.del_page.grid()
+        self.del_name = StringVar()
+        name_l = Label(self.del_page, text="Introduzca nombre completo (sin acentos):", font=("Calibri", "13", "bold"), bg="whitesmoke",
+        fg="black").grid(row=0, column=0, sticky="ew")
+        name_e = Entry(self.del_page, width=30, textvariable=self.new_name,
+        font=("Calibri", "13", "normal")).grid(row=0, column=1, sticky="ew")
+        cancel = Button(self.del_page, text="Cancelar", font=("Calibri", "13", "bold"), bg="gray", fg="white",
+        command=lambda: self.go("del_user -> home")).grid(row=1, column=0, sticky="ew")
+        go_ahead = Button(self.del_page, text="Eliminar", font=("Calibri", "13", "bold"), bg="red", fg="white",
+        command=lambda: self.del_user_internal).grid(row=1, column=1, sticky="ew")
 
     def reg_page(self) -> None:
         "generate a register page."
@@ -236,14 +297,16 @@ Verifique e intente de nuevo.
             to_save[0][new_usr.lower()] = new_id
             with open("C:/Program Files/Control de Agua/tools/users.json", "w") as f:
                 f.write(json.dumps(to_save[0]))
+                f.close()
         except Exception as e:
-            if len(open("C:/Program Files/Control de Agua/tools/users.json", "r").read().strip()) < 1:
-                open("C:/Program Files/Control de Agua/tools/users.json", "w").write("{}")
             messagebox.showerror("Error al registrar", f"""Ha sucedido un error al registrar al usuario. Puede que
 haya dejado la entrada totalmente vacia o haya agregado algun caracter no
 permitido. Verifique e intente de nuevo.
 
 (Error: '{str(e)}')""")
+            if len(open("C:/Program Files/Control de Agua/tools/users.json", "r").read().strip()) < 1:
+                open("C:/Program Files/Control de Agua/tools/users.json", "w").write("{}")
+                panic_msg(e)
             return None
         # success message
         messagebox.showinfo("Proceso completado", f"""El proceso se ha completado exitosamente. Se le redirigira a la pagina de inicio.
@@ -279,6 +342,26 @@ Datos del registro:
         elif arg == "registry_view -> home":
             self.sales_f.grid_remove()
             self.menu()
+        elif arg == "home -> del_user":
+            self.welcome.grid_remove()
+            self.del_user_page()
+        elif arg == "del_user -> home":
+            self.del_page.grid_remove()
+            self.menu()
+        elif arg == "manage product info":
+            # this is quite harder than the others. Actually,
+            # this command is redirecting to another
+            # executable file (or the Python file, if we can).
+            # We are not changing anything from the GUI, we are
+            # just giving an advice (tkinter.messagebox.showinfo)
+            messagebox.showinfo("Aviso", """Se le redirigira a otra
+aplicacion para esta funcion. En un momento debe abrirse.""")
+            # this names are passed according to setup.py
+            # (https://github.com/ControlDeAgua/ControlDeAgua/blob/edaba7bb88b8b41a50b848a97a1486f8d5dc48a1/setup.py#L40-L41)
+            names = ("manage-products.py", "Manejar la informacion de producto.exe")
+            found_path = identify_dir(names[0], names[1])
+            if found_path is not None:
+                startfile(found_path)
         else:
             self.notDefined(arg)
 
