@@ -144,6 +144,10 @@ Verifique sus entradas e intente de nuevo.""")
         command=lambda: self.move_to_option("delete", "home"), font=("Calibri", "13", "bold")).grid(row=1, column=0, sticky="ew")
         go_for_it = Button(self.delete_frame, text="Eliminar elemento", bg="cyan", fg="whitesmoke", font=("Calibri", "13", "bold"),
         command=delete_item).grid(row=1, column=1, sticky="ew")
+    
+    def create(self) -> None:
+        "create an item."
+        self.create_frame = Frame(self.root)
 
     def loop(self) -> None:
         "run self.root.mainloop() from the class."
@@ -189,6 +193,9 @@ para poder ver los cambios realizados.
             # retry the "delete" option
             self.reload_product_info()
             self.delete()
+        elif result == ("home", "create"):
+            self.menu_frame.grid_remove()
+            self.create()
         else:
             # no results? you should say it
             messagebox.showwarning("NotImplemented Error", f"""La opcion del menu no fue identificada: {result}.
