@@ -15,7 +15,32 @@ def get_str_python_version() -> str:
 
 
 def identify_dir(py_name: str, exe_name: str) -> Optional[str]:
-    "Try to identify the directory where the executables are stored."
+    """
+    Try to identify the directory where the executables are stored. You should
+    pass a `py_name` and an `exe_name` (the Python file and its converted
+    executable).
+    
+    After that, we get all the supported combinations, with Python
+    versions:
+    
+    - 3.6
+    - 3.7
+    - 3.8
+    - 3.9
+    - 3.10
+    
+    and these Windows platforms:
+    
+    - "win32"
+    - "win-amd64"
+    
+    So, we should get 10 possible paths. Then, we test if `exe_name`
+    can be found in one of those directories. If not, we look for
+    `py_name` at `C:/Program Files/Control de Agua`.
+    
+    If none of the paths were found, we raise a GUI error using
+    `tkinter.messagebox`. If we found a path, we return it.
+    """
     python_versions = [
       (3, 6),
       (3, 7),
