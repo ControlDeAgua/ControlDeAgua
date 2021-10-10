@@ -6,8 +6,9 @@ import sys
 from typing import Optional
 
 
-def get_str_python_version() -> str:
-    version = sys.version_info
+def get_str_python_version(version=None) -> str:
+    if version is None:
+        version = sys.version_info
     # equivalent to f"{version.major}.{version.minor}". We
     # decided to use the numeric index to avoid conflicts with
     # a custom tuple.
