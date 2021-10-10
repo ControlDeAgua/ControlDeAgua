@@ -35,15 +35,13 @@ import sys
 
 # check if the system info is supported
 if sys.platform != "win32":
-    exit_msg = """This file was intended for win32 implementations of Python.
+    sys.exit("""This file was intended for win32 implementations of Python.
 By now, we are not supporting any other implementation. If
 you really need another implementation, please contact the
-developers of this tool."""
-    sys.exit(exit_msg)
+developers of this tool.""")
 if sys.version_info < (3, 6, 0):
-    exit_msg = """We don't support Python 3.5 (or older) usage.
-Please try to use a newer version."""
-    sys.exit(exit_msg)
+    sys.exit("""We don't support Python 3.5 (or older) usage.
+Please try to use a newer version.""")
 
 # now, import the libraries...
 import shutil
@@ -54,13 +52,13 @@ from typing import Optional
 try:
     from cx_Freeze import __version__ as cxfreeze_version
 except ImportError:
-    exit_msg = "Could not find cx_Freeze package, which is required."
-    sys.exit(exit_msg)
+    sys.exit("Could not find cx_Freeze package, which is required.")
 
-# and start to remove any older library to re-build
 
+# and start to build (or re-build) a ControlDeAgua distribution
 def main() -> None:
     "main function."
+    os.chdir("C:/Program Files/Control de Agua")
     if os.path.exists("build"):
         # there is a previous installation, remove it
         shutil.rmtree("build")
@@ -71,6 +69,6 @@ def main() -> None:
 if __name__ == "__main__":
     try:
         main() # this could fail at any time, so get ready
+        sys.exit(0)
     except Exception as exc:
-        exit_msg = f"Got error while building: {str(exc)}"
-        sys.exit(exit_msg)
+        sys.exit(f"Got error while building: {str(exc)}")
