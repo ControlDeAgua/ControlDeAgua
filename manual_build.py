@@ -49,26 +49,29 @@ import os
 import subprocess
 from typing import Optional
 
-try:
-    from cx_Freeze import __version__ as cxfreeze_version
-except ImportError:
-    sys.exit("Could not find cx_Freeze package, which is required.")
-
 
 # and start to build (or re-build) a ControlDeAgua distribution
 def main() -> None:
     "main function."
     os.chdir("C:/Program Files/Control de Agua")
+    try:
+        print("Installing requirements...")
+        subprocess.run(["pip", "install", "-r", "requirements.txt"])
+    except Exception as exc:
+        print(f"Could not install dependecies due to a {type(exc).__name__}: {str(exc)}")
+        print("Some dependencies may not be installed.")
     if os.path.exists("build"):
         # there is a previous installation, remove it
+        print("\nTrying to remove the previous installation...")
         shutil.rmtree("build")
+        print("Removed any previous executable!")
 
-    print(f"Using cx_Freeze (version {cxfreeze_version}) to build now...")
-    subprocess.run("setup.py build", shell=True)
+    print(f"\nUsing cx_Freeze to build now... this could take a while...\n")
+    subprocess.run(["setup.py", "build"], shell=True)
 
 if __name__ == "__main__":
     try:
         main() # this could fail at any time, so get ready
         sys.exit(0)
     except Exception as exc:
-        sys.exit(f"Got error while building: {str(exc)}")
+        sys.exit(f"FATAL: Got error while building: {str(exc)}")
