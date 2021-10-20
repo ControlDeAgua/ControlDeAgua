@@ -19,7 +19,7 @@ class ProductManager:
     def __init__(self, root: Tk) -> None:
         "constructor method."
         self.root = root
-        self.product_dict = get_product_dict()
+        self.product_dict = ProductMap()
         self.main_menu()
     
     def reload_product_info(self) -> None:
@@ -79,14 +79,14 @@ en las operaciones de venta y reporte.""", font=("Calibri", "14", "bold"), bg="w
         self.manage_selection = IntVar()
         self.manage_new_value = DoubleVar()
         self.manage_odo_value = DoubleVar()
-        self.manage_options = self.product_dir.get_list()
+        self.manage_options = self.product_dict.get_list()
         # add a manage_product function
         def manage_product():
             try:
-                target, m_value, o_value = self.product_dict.product_index[self.manage_selection.get()], self.manage_new_value.get(), self.manage_odo_value.get()
+                target, m_value, o_value = self.product_dict.product_index[self.manage_selection.get()-1], self.manage_new_value.get(), self.manage_odo_value.get()
                 self.product_dict.products[target] = [m_value, o_value]
                 with open("C:/Program Files/Control de Agua/tools/products.json", "w") as f:
-                    f.write(json.dump(self.product_dict.products))
+                    f.write(json.dumps(self.product_dict.products))
             except Exception as e:
                 messagebox.showerror("Error", f"""{type(e).__name__}: {str(e)}
 
@@ -104,7 +104,7 @@ Verifique sus entradas e intente de nuevo.""")
                               column=1)
         l1 = Label(self.manage_frame, text="2. Introduzca el valor de odometro:", bg="whitesmoke", fg="black",
         font=("Calibri", "13", "bold")).grid(row=1, column=0, sticky="ew")
-        new_odo = Entry(self.manage_frame, textvariable=self.manage_odo_value, width=40).grid(row=1, coulmn=1, sticky="ew")
+        new_odo = Entry(self.manage_frame, textvariable=self.manage_odo_value, width=40).grid(row=1, column=1, sticky="ew")
         l2 = Label(self.manage_frame, text="2. Introduzca un valor para reemplazar (pesos mexicanos):", bg="whitesmoke",
         fg="black", font=("Calibri", "13", "bold")).grid(row=2, column=0, sticky="ew")
         new_value = Entry(self.manage_frame, textvariable=self.manage_new_value, width=40).grid(row=2, column=1, sticky="ew")
@@ -118,17 +118,17 @@ Verifique sus entradas e intente de nuevo.""")
         self.delete_frame = Frame(self.root)
         self.delete_frame.grid()
         self.delete_selection = IntVar()
-        self.delete_options = self.product_dir.get_list()
+        self.delete_options = self.product_dict.get_list()
         # remove an item and save
         def delete_item():
             try:
-                target = self.product_dict.product_index[self.manage_selection.get()]
+                target = self.product_dict.product_index[self.delete_selection.get()-1]
                 new = {}
                 for k in self.product_dict.products:
                     if k == target: continue
                     new[k] = self.product_dict.products[v]
                 with open("C:/Program Files/Control de Agua/tools/products.json", "w") as f:
-                    f.write(json.dump(new))
+                    f.write(json.dumps(new))
             except Exception as e:
                 messagebox.showerror("Error", f"""{type(e).__name__}: {str(e)}
 
@@ -156,7 +156,7 @@ Verifique sus entradas e intente de nuevo.""")
         self.create_selection = StringVar()
         self.create_new_value = DoubleVar()
         self.create_odo_value = DoubleVar()
-        self.create_options = self.product_dir.get_list()
+        self.create_options = self.product_dict.get_list()
         # add a create_product function
         def create_product():
             try:
@@ -165,7 +165,7 @@ Verifique sus entradas e intente de nuevo.""")
                     raise ValueError(f"El valor '{target}' ya existe. Mejor utilice la funcion de manejo.")
                 self.product_dict.products[target] = [money_value, odo_value]
                 with open("C:/Program Files/Control de Agua/tools/products.json", "w") as f:
-                    f.write(json.dump(self.product_dict.products))
+                    f.write(json.dumps(self.product_dict.products))
             except Exception as e:
                 messagebox.showerror("Error", f"""{type(e).__name__}: '{str(e)}'
 
@@ -176,10 +176,10 @@ Verifique sus entradas e intente de nuevo.""")
         # add labels and menubuttons
         l = Label(self.create_frame, text="1. Introduzca el nuevo producto:", bg="whitesmoke", fg="black",
         font=("Calibri", "13", "bold")).grid(row=0, column=0, sticky="ew")
-        new_opt = Entry(self.create_frame, textvariable=self.create_selection, width=40).grid(row=0, coulmn=1, sticky="ew")
+        new_opt = Entry(self.create_frame, textvariable=self.create_selection, width=40).grid(row=0, column=1, sticky="ew")
         l1 = Label(self.create_frame, text="2. Introduzca el valor de odometro:", bg="whitesmoke", fg="black",
         font=("Calibri", "13", "bold")).grid(row=1, column=0, sticky="ew")
-        new_odo = Entry(self.create_frame, textvariable=self.create_odo_value, width=40).grid(row=1, coulmn=1, sticky="ew")
+        new_odo = Entry(self.create_frame, textvariable=self.create_odo_value, width=40).grid(row=1, column=1, sticky="ew")
         l2 = Label(self.create_frame, text="3. Introduzca un valor para reemplazar (pesos mexicanos):", bg="whitesmoke",
         fg="black", font=("Calibri", "13", "bold")).grid(row=2, column=0, sticky="ew")
         new_value = Entry(self.create_frame, textvariable=self.create_new_value, width=40).grid(row=2, column=1, sticky="ew")
@@ -207,9 +207,9 @@ para poder ver los cambios realizados.
         if result == ("home", "show"):
             # an easy one: just show the product list
             text = ""
-            for k, v in self.product_dict.products.values():
+            for k, v in self.product_dict.products.items():
                 text += f"{'='*60}\n- Producto: {k}\n- Valor monetario: ${v[0]}\n- Valor en la cuenta del odometro: {v[1]}\n"
-            view_text("Lista de productos registrados", text)
+            view_text(self.root, "Lista de productos registrados", text)
             del(text)
             return None
         elif result == ("home", "manage"):
