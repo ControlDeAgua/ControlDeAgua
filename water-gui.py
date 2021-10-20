@@ -69,7 +69,7 @@ class WaterGUI:
     def door(self) -> None:
         "user door."
         self.door_page = Frame(self.root)
-        setSize(self.root, 540, 120)
+        setSize(self.root, 632, 115)
         self.door_page.grid()
         usr_var = StringVar()
         pwd_var = StringVar()
@@ -120,11 +120,11 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
         # add an image logo
         if os.path.exists(FOLDER+"img/home.jpg"):
             img_file = ImageTk.PhotoImage(file=FOLDER+"img/home.jpg")
-            setSize(self.root, 678, 455) # WARNING: take a look for this when inserting a new image!
+            setSize(self.root, 678, 430) # WARNING: take a look for this when inserting a new image!
         else:
             # there is no home image! use a weird supply image
             img_file = ImageTk.PhotoImage(file=FOLDER+"img/home-supply.jpg")
-            setSize(self.root, 752, 640)
+            setSize(self.root, 752, 615)
         self.home = Frame(self.root)
         self.home.grid()
         img_label = Label(self.home, image=img_file)
@@ -144,7 +144,7 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
         "prompt to enter new things."
         self.rpage = Frame(self.root)
         self.rpage.grid()
-        setSize(self.root, 505, 90)
+        setSize(self.root, 394, 83)
         # data variables to prompt
         self.reading = DoubleVar()
         self.menu_selection = IntVar()
