@@ -8,6 +8,7 @@ import json
 from tkinter import *
 from tkinter import messagebox
 from idlelib.textview import view_text
+from os import startfile
 from tools.build_platform_dir import identify_dir
 from tools.database import *
 from tools.datetimes import compare_dates
