@@ -38,7 +38,8 @@ exe = [Executable("water-gui.py",
        Executable("admin-pwd.py",
                   target_name="Cambiar clave de administrador.exe"),
        Executable("manage-products.py",
-                  target_name="Manejar la informacion de producto.exe")]
+                  target_name="Manejar la informacion de producto.exe",
+                  base=gui_base)]
 
 setup(name="Control de Agua - MX",
       version="1.0",  # just like a... patch?
