@@ -110,7 +110,7 @@ Verifique sus entradas e intente de nuevo.""")
         new_value = Entry(self.manage_frame, textvariable=self.manage_new_value, width=40).grid(row=2, column=1, sticky="ew")
         cancel = Button(self.manage_frame, text="Cancelar", bg="red", fg="whitesmoke",
         command=lambda:self.move_to_option("manage", "home")).grid(row=3, column=0, sticky="ew")
-        move_it = Button(self.manage_frame, text="Modificar", bg="cyan",  # i decided to use cyan instead of green!
+        move_it = Button(self.manage_frame, text="Modificar", bg="blue",
         fg="whitesmoke", command=manage_product).grid(row=3, column=1, sticky="ew")
     
     def delete(self) -> None:
@@ -185,7 +185,7 @@ Verifique sus entradas e intente de nuevo.""")
         new_value = Entry(self.create_frame, textvariable=self.create_new_value, width=40).grid(row=2, column=1, sticky="ew")
         cancel = Button(self.create_frame, text="Cancelar", bg="red", fg="whitesmoke",
         command=lambda:self.move_to_option("create", "home")).grid(row=3, column=0, sticky="ew")
-        move_it = Button(self.create_frame, text="Modificar", bg="cyan",  # i decided to use cyan instead of green!
+        move_it = Button(self.create_frame, text="Modificar", bg="blue",
         fg="whitesmoke", command=create_product).grid(row=3, column=1, sticky="ew")
 
     def loop(self) -> None:
