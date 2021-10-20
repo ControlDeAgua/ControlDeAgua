@@ -3,10 +3,10 @@
 import os
 import sys
 
-from typing import Optional
+from typing import Optional, Tuple
 
 
-def get_str_python_version(version=None) -> str:
+def get_str_python_version(version: Optional[Tuple[str]] = None) -> str:
     if version is None:
         version = sys.version_info
     # equivalent to f"{version.major}.{version.minor}". We
@@ -58,7 +58,7 @@ def identify_dir(py_name: str, exe_name: str) -> Optional[str]:
         for platform in win_platforms:
             possible_path = f"{current_path}/build/exe.{platform}-{formatted_version}/{exe_name}"
             if os.path.exists(possible_path):
-                found_path = possible_dir
+                found_path = possible_path
                 found_dir = True
                 break
 
