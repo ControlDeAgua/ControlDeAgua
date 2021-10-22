@@ -56,7 +56,7 @@ def main() -> None:
     os.chdir("C:/Program Files/Control de Agua")
     try:
         print("Installing requirements...")
-        subprocess.run(["pip", "install", "-r", "requirements.txt"])
+        subprocess.run(["python", "-m", "pip", "install", "-r", "requirements.txt"])
     except Exception as exc:
         print(f"Could not install dependecies due to a {type(exc).__name__}: {str(exc)}")
         print("Some dependencies may not be installed.")
