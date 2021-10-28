@@ -234,7 +234,7 @@ Revise los datos introducidos e intente de nuevo.
             return None
         # then, get the number prompt
         try:
-            self.actual_odometer_read += self.per_unit.find_odometer_value(product)
+            self.actual_odometer_read += self.per_unit.get_odometer_value(product)
         except Exception as e:
             messagebox.showerror("Error al operar el valor del odometro", f"""Verifique e intente de nuevo.
 
