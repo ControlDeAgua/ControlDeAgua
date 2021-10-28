@@ -1,6 +1,6 @@
 "Prefabicated Tkinter widgets and apps for my projects."
 
-__all__ = ("get_listbox", "get_menubutton")
+__all__ = ("get_listbox", "get_menubutton", "ReasonEntry")
 
 from tkinter import *
 
