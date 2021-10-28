@@ -115,7 +115,7 @@ favor de reportarlo en http://github.com/ControlDeAgua/ControldeAgua/issues/new"
     # (we are automattically adding a datetime,
     # as a security add-on)
     cur.execute("""INSERT INTO Prompt
-        (vendor_id, product_id, odometer_read, cost, datetime) VALUES ( ?, ?, ?, ?, ?, ? )""",
+        (vendor_id, product_id, odometer_read, cost, datetime, noentry_reason) VALUES ( ?, ?, ?, ?, ?, ? )""",
         (vendor_id, client_id, read, total_cost, datetime.today().strftime("%B %d, %Y %H:%M:%S"), reason))
     conn.commit()
 
