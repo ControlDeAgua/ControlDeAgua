@@ -252,7 +252,7 @@ Revise los datos introducidos e intente de nuevo.
         # done? redirect to self.update_db()
         if messagebox.askyesno("¿Seguir?", """¿Desea seguir con el proceso usando las variables definidas?
 (Este proceso no se puede deshacer)"""):
-            if messagebox.askyesno("¿Registrar cobro?", """¿Desea registrar un ingreso al negocio por el producto tomado?
+            if not messagebox.askyesno("¿Registrar cobro?", """¿Desea registrar un ingreso al negocio por el producto tomado?
 
 Si no, se le va a redirigir a una pagina para
 que explique sus motivos."""):
