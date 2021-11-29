@@ -10,8 +10,9 @@ from tkinter import messagebox
 from typing import Optional
 from tools import windowmanager
 from tools.database import ensureDatabase
+from tools.pathfinders import find_our_file
 
-PathName = "C:/Program Files/Control de Agua/db/WaterDB.sqlite"
+PathName = find_our_file("db/WaterDB.sqlite")
 
 def destroy_database(pathname: str) -> None:
     "if you can, delete the whole database file. If not, show an error message."
@@ -22,7 +23,7 @@ def destroy_database(pathname: str) -> None:
             return None
         os.remove(pathname)
         # after destroying the file, rewrite the scheme
-        ensureDatabase(pathname, False)
+        ensureDatabase(pathname)
         # completion message
         messagebox.showinfo("Proceso terminado", "El proceso ha terminado exitosamente. La base de datos fue eliminada.")
     except Exception as e:

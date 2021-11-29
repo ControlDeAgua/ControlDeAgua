@@ -6,6 +6,8 @@ handle users and accounts.
 import json
 import hashlib
 
+from tools.pathfinders import find_our_file
+
 # stuff for annotations
 from typing import Optional
 import tkinter
@@ -66,21 +68,21 @@ def get_user_pwd(usr: str) -> str:
     """
     usr = usr.lower()
     try:
-        with open("C:/Program Files/Control de Agua/tools/users.json") as js:
+        with open(find_our_file("tools/users.json")) as js:
             # the user exists, the value exists too
             return json.loads(js.read())[usr]
     except:
         # use a cryptographic string that (obvoiusly) won't be used on
         # any kind of password!!!
-        return hashlib.sha224(b"No one's going to use this password, it must fail when used").hexdigest()
+        return hashlib.sha224(b"No one's going to use this password, it must fail when used...").hexdigest()
 
 def check(var: UserJar) -> bool:
     "check the admin"
-    return open("C:/Program Files/Control De Agua/tools/admin.txt").read().strip() == var.get().strip()
+    return open(find_our_file("tools/admin.txt")).read().strip() == var.get().strip()
 
 def get_admin_pwd() -> Optional[str]:
     "get the current admin password. If it doesn't exists, just avoid it"
-    s = open("C:/Program Files/Control De Agua/tools/admin.txt").read().strip()
+    s = open(find_our_file("tools/admin.txt")).read().strip()
     if len(s) < 1:
         return None
     return s

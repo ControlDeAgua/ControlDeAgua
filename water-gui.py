@@ -39,14 +39,14 @@ from tools.database import (getDatabase,
                             ProductMap)
 from tools.windowmanager import *
 from tools.users import UserJar, get_user_pwd
+from tools.pathfinders import find_our_file
 from tools.prefabricated import *
 
 # set some file variables
-FILE = "WaterDB.sqlite"
-FOLDER = "C:/Program Files/Control de Agua/"
+FILE = find_our_file("db/WaterDB.sqlite", True)
 
 # get sure that the database is correctly generated
-ensureDatabase(FILE, use_prefix=True)
+ensureDatabase(FILE)
 DATABASE, CURSOR = getDatabase(FILE)
 
 # genereate the GUI declarations
@@ -118,12 +118,12 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
     def home_menu(self) -> None:
         "generate the welcome menu."
         # add an image logo
-        if os.path.exists(FOLDER+"img/home.jpg"):
-            img_file = ImageTk.PhotoImage(file=FOLDER+"img/home.jpg")
+        if os.path.exists(find_our_file("img/home.jpg")):
+            img_file = ImageTk.PhotoImage(file=find_our_file("img/home.jpg"))
             setSize(self.root, 678, 430) # WARNING: take a look for this when inserting a new image!
         else:
             # there is no home image! use a weird supply image
-            img_file = ImageTk.PhotoImage(file=FOLDER+"img/home-supply.jpg")
+            img_file = ImageTk.PhotoImage(file=find_our_file("img/home-supply.jpg"))
             setSize(self.root, 752, 615)
         self.home = Frame(self.root)
         self.home.grid()
@@ -172,7 +172,7 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
     def loop(self) -> None:
         "start looping over the Tk root. Use this when the Tk is not available outside the class."
         self.root.mainloop()
-    
+
     def analyze_menubutton(self, var: IntVar, menu: Menubutton) -> Optional[str]:
         "fastly analyze the selected IntVar, and return a result"
         # look for a selection
@@ -180,14 +180,14 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
             index = var.get()
         except Exception as e:
             messagebox.showerror("Parametro inadecuado", f"""En el menu desplegable de opciones, no se ha podido detectar
-una seleccion. Verifique e intente de nuevo. 
+una seleccion. Verifique e intente de nuevo.
 Si le parece haber hallado un error, reportelo a:
 
     http://github.com/ControlDeAgua/ControlDeAgua/issues/new
 
 (Error: '{str(e)}')""")
             return None
-        
+
         # return the translated selection
         try:
             return self.product_index[index - 1]
@@ -197,7 +197,7 @@ Si le parece haber hallado un error, reportelo a:
 
 (Error: '{str(e)}')""")
             return None
-    
+
     def no_entry(self, p: str, v: str, u: float) -> str:
         "register a sale, but not a monetary entry."
         ask_for_reason = ReasonEntry()
@@ -326,7 +326,7 @@ Puede generar un nuevo registro o salir desde el menu inicial.""")
     def opendb(self):
         "try to open the SQLite. Else, return a Tk error message."
         try:
-            startfile(FOLDER+"db/WaterDB.sqlite")
+            startfile(find_our_file("db/WaterDB.sqlite"))
         except OSError as e:
             messagebox.showwarning("Error al abrir archivo", f"""Hubo un error al abrir la base de datos.
 
