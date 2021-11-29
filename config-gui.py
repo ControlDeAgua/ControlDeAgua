@@ -9,7 +9,7 @@ from tkinter import *
 from tkinter import messagebox
 from idlelib.textview import view_text
 from os import startfile
-from tools.build_platform_dir import identify_dir
+from tools.pathfinders import identify_dir, find_our_file
 from tools.database import *
 from tools.datetimes import compare_dates
 from tools.panic import panic_msg
@@ -20,7 +20,7 @@ from tools.users import check, get_admin_pwd
 # annotation stuff
 from typing import Callable, Optional
 
-DB, CUR = getDatabase("WaterDB.sqlite")
+DB, CUR = getDatabase(find_our_file("db/WaterDB.sqlite"))
 
 class GUI:
     """
@@ -78,11 +78,11 @@ y privilegios del administrador.""")
         "show the users"
         user_map = {}
         try:
-            with open("C:/Program Files/Control de Agua/tools/users.json", "r") as f:
+            with open(find_our_file("tools/users.json"), "r") as f:
                 user_map = json.loads(f.read())
         except Exception as e:
-            if len(open("C:/Program Files/Control de Agua/tools/users.json", "r").read().strip()) < 1:
-                open("C:/Program Files/Control de Agua/tools/users.json", "w").write("{}")
+            if len(open(find_our_file("tools/users.json"), "r").read().strip()) < 1:
+                open(find_our_file("tools/users.json"), "w").write("{}")
                 panic_msg(e)
             else:
                 messagebox.showwarning("?", f"error: {str(e)}")
@@ -124,7 +124,7 @@ y privilegios del administrador.""")
         # exit button
         get_out = Button(self.welcome, text="Salir de la pagina", bg="red", fg="white",
         font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=7, column=0, sticky="ew")
-    
+
     def del_user_internal(self) -> None:
         "internal deletion for the selected user (self.del_name)"
         if not messagebox.askyesno("¿Proceder?", """¿En verdad desea proceder con esta accion?
@@ -136,7 +136,7 @@ pero los registros a su nombre no se eliminan)"""):
             if len(selected_usr) < 1: raise ValueError('Expected non-empty strings, got ""')
             # update
             to_save = {}
-            with open("C:/Program Files/Control de Agua/tools/users.json", "r") as f:
+            with open(find_our_file("tools/users.json"), "r") as f:
                 f_parsed = json.loads(f.read())
                 if selected_usr not in f_parsed: raise KeyError("El usuario no existe")
                 for k, v in f_parsed.items():
@@ -144,7 +144,7 @@ pero los registros a su nombre no se eliminan)"""):
                         # don't save that user
                         continue
                     to_save[k] = v
-            with open("C:/Program Files/Control de Agua/tools/users.json", "w") as wf:
+            with open(find_our_file("tools/users.json"), "w") as wf:
                 wf.write(json.dumps(to_save))
         except Exception as e:
             messagebox.showerror("Error al registrar", f"""Ha sucedido un error al retirar al usuario. Puede que
@@ -152,9 +152,9 @@ haya dejado la entrada totalmente vacia o haya agregado algun caracter no
 permitido. Verifique e intente de nuevo.
 
 (Error: '{str(e)}')""")
-            if len(open("C:/Program Files/Control de Agua/tools/users.json", "r").read().strip()) < 1:
+            if len(open(find_our_file("tools/users.json"), "r").read().strip()) < 1:
                 # probably, we couldn't write inside the file. So, we are going to push a panic message
-                open("C:/Program Files/Control de Agua/tools/users.json", "w").write("{}")
+                open(find_our_file("tools/users.json"), "w").write("{}")
                 panic_msg(e)
             return None
         # success message
@@ -162,7 +162,7 @@ permitido. Verifique e intente de nuevo.
 '{selected_usr}' del registro de usuarios.""")
         self.go("del_user -> home")
 
-    
+
     def del_user_page(self) -> None:
         "remove a user from the list."
         self.del_page = Frame()
@@ -195,7 +195,7 @@ permitido. Verifique e intente de nuevo.
         command=lambda: self.go("register -> home")).grid(row=2, column=0, sticky="ew")
         send_b = Button(self.regframe, text="Registrar", font=("Calibri", "13", "bold"), bg="green", fg="white",
         command=self.register_internal).grid(row=2, column=1, sticky="ew")
-    
+
     def see_registry_internal(self) -> None:
         "Second part of `see_registry`."
         try:
@@ -259,7 +259,7 @@ Verifique e intente de nuevo.
         # show the final product
         finale_str = intro + "\n\n" + "*"*60 + finale_str
         view_text(self.root, "Registro de ventas", finale_str)
-    
+
     def see_registry(self) -> None:
         """
         See the sales registry. This giant function will prompt for an initial date
@@ -293,10 +293,10 @@ Verifique e intente de nuevo.
             if len(new_usr) < 1: raise ValueError(f'Expected non-empty strings, got ""')
             # update
             to_save = []
-            with open("C:/Program Files/Control de Agua/tools/users.json", "r") as f:
+            with open(find_our_file("tools/users.json"), "r") as f:
                 to_save.append(json.loads(f.read()))
             to_save[0][new_usr.lower()] = new_id
-            with open("C:/Program Files/Control de Agua/tools/users.json", "w") as f:
+            with open(find_our_file("tools/users.json"), "w") as f:
                 f.write(json.dumps(to_save[0]))
                 f.close()
         except Exception as e:
@@ -305,8 +305,8 @@ haya dejado la entrada totalmente vacia o haya agregado algun caracter no
 permitido. Verifique e intente de nuevo.
 
 (Error: '{str(e)}')""")
-            if len(open("C:/Program Files/Control de Agua/tools/users.json", "r").read().strip()) < 1:
-                open("C:/Program Files/Control de Agua/tools/users.json", "w").write("{}")
+            if len(open(find_our_file("tools/users.json"), "r").read().strip()) < 1:
+                open(find_our_file("tools/users.json"), "w").write("{}")
                 panic_msg(e)
             return None
         # success message

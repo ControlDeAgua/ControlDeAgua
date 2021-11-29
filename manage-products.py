@@ -5,8 +5,9 @@ from idlelib.textview import view_text
 from tkinter import *
 from tkinter import messagebox
 from tools import panic
-from tools.database import get_product_dict
+from tools.database import get_product_dict, ProductMap
 from tools.prefabricated import get_menubutton
+from tools.pathfinders import find_our_file
 
 class ProductManager:
     """
@@ -15,21 +16,21 @@ class ProductManager:
     info can be managed by anyone (if they know
     how to do it!)...
     """
-    
+
     def __init__(self, root: Tk) -> None:
         "constructor method."
         self.root = root
         self.product_dict = ProductMap()
         self.main_menu()
-    
+
     def reload_product_info(self) -> None:
         """
         Open the file stream about product information. Even
         when this stream does not affect the main form
         ('Control de Agua.exe' and its Python format), it is
-        reccommended to close that program to use the new
+        recommended to close that program to use the new
         values.
-        
+
         (In most of the cases, you don't have to run this
         method manually. This is only used to re-force the
         product info).
@@ -39,11 +40,11 @@ class ProductManager:
             self.product_dict = ProductMap()
         except Exception as e:
             panic.panic_msg(e)
-    
+
     def main_menu(self) -> None:
         """
         Main menu with the following options:
-        
+
         - Manage an existent product
         - Delete an existent product
         - Register a new product
@@ -71,7 +72,7 @@ en las operaciones de venta y reporte.""", font=("Calibri", "14", "bold"), bg="w
         # option to exit
         exit = Button(self.menu_frame, text="Salir", fg="white", bg="red",
         font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=5, column=0, sticky="ew")
-    
+
     def manage(self) -> None:
         "manage a product."
         self.manage_frame = Frame(self.root)
@@ -85,7 +86,7 @@ en las operaciones de venta y reporte.""", font=("Calibri", "14", "bold"), bg="w
             try:
                 target, m_value, o_value = self.product_dict.product_index[self.manage_selection.get()-1], self.manage_new_value.get(), self.manage_odo_value.get()
                 self.product_dict.products[target] = [m_value, o_value]
-                with open("C:/Program Files/Control de Agua/tools/products.json", "w") as f:
+                with open(find_our_file("tools/products.json"), "w") as f:
                     f.write(json.dumps(self.product_dict.products))
             except Exception as e:
                 messagebox.showerror("Error", f"""{type(e).__name__}: {str(e)}
@@ -112,7 +113,7 @@ Verifique sus entradas e intente de nuevo.""")
         command=lambda:self.move_to_option("manage", "home")).grid(row=3, column=0, sticky="ew")
         move_it = Button(self.manage_frame, text="Modificar", bg="blue",
         fg="whitesmoke", command=manage_product).grid(row=3, column=1, sticky="ew")
-    
+
     def delete(self) -> None:
         "interface to delete an item."
         self.delete_frame = Frame(self.root)
@@ -127,7 +128,7 @@ Verifique sus entradas e intente de nuevo.""")
                 for k in self.product_dict.products:
                     if k == target: continue
                     new[k] = self.product_dict.products[v]
-                with open("C:/Program Files/Control de Agua/tools/products.json", "w") as f:
+                with open(find_our_file("tools/products.json"), "w") as f:
                     f.write(json.dumps(new))
             except Exception as e:
                 messagebox.showerror("Error", f"""{type(e).__name__}: {str(e)}
@@ -148,7 +149,7 @@ Verifique sus entradas e intente de nuevo.""")
         command=lambda: self.move_to_option("delete", "home"), font=("Calibri", "13", "bold")).grid(row=1, column=0, sticky="ew")
         go_for_it = Button(self.delete_frame, text="Eliminar elemento", bg="cyan", fg="whitesmoke", font=("Calibri", "13", "bold"),
         command=delete_item).grid(row=1, column=1, sticky="ew")
-    
+
     def create(self) -> None:
         "create an item."
         self.create_frame = Frame(self.root)
@@ -164,7 +165,7 @@ Verifique sus entradas e intente de nuevo.""")
                 if target in self.product_dict.products.keys():
                     raise ValueError(f"El valor '{target}' ya existe. Mejor utilice la funcion de manejo.")
                 self.product_dict.products[target] = [money_value, odo_value]
-                with open("C:/Program Files/Control de Agua/tools/products.json", "w") as f:
+                with open(find_our_file("tools/products.json"), "w") as f:
                     f.write(json.dumps(self.product_dict.products))
             except Exception as e:
                 messagebox.showerror("Error", f"""{type(e).__name__}: '{str(e)}'
@@ -191,7 +192,7 @@ Verifique sus entradas e intente de nuevo.""")
     def loop(self) -> None:
         "run self.root.mainloop() from the class."
         self.root.mainloop()
-    
+
     def finish_message(self, event: str) -> None:
         "message shown each time we complete an operation here. Ain't so hard."
         messagebox.showinfo("Proceso completado sin errores", f"""El proceso se ha completado con exito.
@@ -199,7 +200,7 @@ Recuerde cerrar la aplicacion de registro/configuracion y volverla a abrir
 para poder ver los cambios realizados.
 
 (Proceso: {event})""")
-    
+
     def move_to_option(self, origin: str, dest: str) -> None:
         "Move between frames."
         result = (origin, dest)

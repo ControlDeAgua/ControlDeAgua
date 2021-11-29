@@ -17,6 +17,8 @@ from tkinter import messagebox
 from datetime import datetime
 from typing import Dict, List
 
+from tools.pathfinders import find_our_file
+
 Prefix = "C:/Program files/Control de Agua/db/"
 Container = []
 
@@ -44,11 +46,10 @@ def _db_exists(pathname: str) -> bool:
     return os.path.exists(pathname)
 
 
-def ensureDatabase(name: str, use_prefix: bool = True) -> None:
+def ensureDatabase(name: str) -> None:
     "get sure that the db exists. If not, create one."
-    realname = _db_route(name, prefix=use_prefix)
-    # if the db does not exists, the tables must be created.
-    conn = sqlite3.connect(realname)
+    # if the db does not exists, the tables must be created.}
+    conn = sqlite3.connect(name)
     cur = conn.cursor()
     cur.executescript("""
 CREATE TABLE IF NOT EXISTS Prompt (
@@ -74,15 +75,15 @@ CREATE TABLE IF NOT EXISTS Vendors (
     cur.close()
     del(cur, conn)
     # log the database path
-    Container.append(realname)
+    Container.append(name)
 
 
 def getDatabase(fname: str, use_prefix: bool = True) -> tuple:
     "obtain the SQL database, and get sure it has the correct setup."
-    pathname = _db_route(fname, prefix=use_prefix)
+    pathname = _db_route(fname)
     if pathname not in Container:
         # ensure the database first
-        ensureDatabase(fname, use_prefix)
+        ensureDatabase(fname)
     conn = sqlite3.connect(pathname)
     cur = conn.cursor()
     return conn, cur
@@ -120,7 +121,7 @@ favor de reportarlo en http://github.com/ControlDeAgua/ControldeAgua/issues/new"
     conn.commit()
 
 def get_product_dict() -> Dict[str, float]:
-    f = open("C://Program Files/Control de Agua/tools/products.json")
+    f = open(find_our_file("tools/products.json"))
     contents = json.loads(f.read())
     f.close()
     return contents
@@ -167,7 +168,7 @@ def get_dates(pathname: str, use_prefix: bool = True) -> List[str]:
     # but we want something like this:
     # [data, data, data]
     #
-    # to get what we want, we are extracting 
+    # to get what we want, we are extracting
     # `data` and returning a fixed `datetimes`
     # (called `datetimes_fixed`).
     datetimes_fixed = []

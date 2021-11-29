@@ -4,6 +4,16 @@ import os
 import sys
 
 from typing import Optional, Tuple
+from tkinter import messagebox
+
+python_versions = [
+  (3, 6),
+  (3, 7),
+  (3, 8),
+  (3, 9),
+  (3, 10)
+]
+win_platforms = ["win32", "win-amd64"]
 
 
 def get_str_python_version(version: Optional[Tuple[str]] = None) -> str:
@@ -20,38 +30,30 @@ def identify_dir(py_name: str, exe_name: str) -> Optional[str]:
     Try to identify the directory where the executables are stored. You should
     pass a `py_name` and an `exe_name` (the Python file and its converted
     executable).
-    
+
     After that, we get all the supported combinations, with Python
     versions:
-    
+
     - 3.6
     - 3.7
     - 3.8
     - 3.9
     - 3.10
-    
+
     and these Windows platforms:
-    
+
     - "win32"
     - "win-amd64"
-    
+
     So, we should get 10 possible paths. Then, we test if `exe_name`
     can be found in one of those directories. If not, we look for
     `py_name` at `C:/Program Files/Control de Agua`.
-    
+
     If none of the paths were found, we raise a GUI error using
     `tkinter.messagebox`. If we found a path, we return it.
     """
-    python_versions = [
-      (3, 6),
-      (3, 7),
-      (3, 8),
-      (3, 9),
-      (3, 10)
-    ]
-    win_platforms = ["win32", "win-amd64"]
     found_dir = False
-    current_path = os.path.dirname()[-1] if os.path.dirname().endswith("/") or os.path.dirname().endswith("\ ".strip()) else os.path.dirname()
+    current_path = os.getcwd()[-1] if os.getcwd().endswith("/") or os.getcwd().endswith("\ ".strip()) else os.getcwd()
     current_path = "." if current_path.split(".")[-1] not in win_platforms else "../../"
     found_path = ""
     for version in python_versions:
@@ -73,16 +75,22 @@ Por favor reporte esto en <https://github.com/ControlDeAgua/bug_tracker/issues>"
     return found_path
 
 
-def find_our_file(path: str) -> str:
+def find_our_file(path: str, not_exists: bool = False) -> str:
     """
     Find a program or resource, that should
     live in the ControlDeAgua folder.
     """
     if os.path.exists(path):
-        return f"./{path}"
+        return os.path.abspath(f"./{path}")
     elif os.path.exists(f"../../{path}"):
-        return f"../../{path}"
+        return os.path.abspath(f"../../{path}")
     else:
+        if not_exists:
+            current_path = os.getcwd()[-1] if os.getcwd().endswith("/") or os.getcwd().endswith("\ ".strip()) else os.getcwd()
+            using_executable = False if current_path.split(".")[-1] not in win_platforms else True
+            if using_executable:
+                return os.path.abspath(f"../../{path}")
+            return os.path.abspath(f"./{path}")
         messagebox.showerror("Error interno", f"""Error fatal: No se pudo hallar el recurso: '{path}'.
 Por favor reporte esto en <https://github.com/ControlDeAgua/bug_tracker/issues>""")
         return None
