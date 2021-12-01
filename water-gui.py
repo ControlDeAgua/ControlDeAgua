@@ -19,6 +19,7 @@ import sys
 # libraries that uses "from package/module import names":
 from tkinter import *
 from tkinter import messagebox
+from tkinter import simpledialog
 from os import startfile
 
 # annotation stuff
@@ -200,14 +201,8 @@ Si le parece haber hallado un error, reportelo a:
 
     def no_entry(self, p: str, v: str, u: float) -> str:
         "register a sale, but not a monetary entry."
-        ask_for_reason = ReasonEntry()
-        ask_for_reason.loop()
-        while 1:
-            if ask_for_reason.is_completed():
-                # mission accomplished! get the entry,
-                # format and then return
-                msg = f"El producto '{p}' (cantidad: {u}) fue tomado por {v}, pero sin ingresos, por la razon: '{ask_for_reason.get_msg()}'"
-                break
+        reason = simpledialog.askstring("Introduzca motivo", "Introduzca un motivo para omitir el ingreso:")
+        msg = f"El producto '{p}' (cantidad: {u}) fue tomado por {v}, pero sin ingresos, por la razon: '{reason}'"
         return msg
 
     def evaluate(self) -> None:

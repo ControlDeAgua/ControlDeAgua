@@ -30,7 +30,9 @@ def main():
         os.remove("./db/WaterDB.sqlite")
     try:
         print(f"Running '{file}'. This could take a while.")
+        print("-"*60)
         subprocess.run(file, shell=True)
+        print("-"*60)
     except Exception as e:
         print(f"{type(e).__name__}: {str(e)}")
     try:
@@ -43,7 +45,7 @@ def main():
             print("Trying to restore the database... ahh...")
             if os.path.exists("./db/WaterDB.sqlite"):
                 os.remove("./db/WaterDB.sqlite")
-            recovery = open("./db/WaterDB.sqlite", "x")
+            recovery = open("./db/WaterDB.sqlite", "x", encoding="utf-8")
         except Exception as e:
             parser.error(f"fatal error while cleaning database: {str(e)}")
 

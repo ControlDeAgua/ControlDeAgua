@@ -136,12 +136,12 @@ reporte esto al desarrollador del producto.
     index = 1
     mb = Menubutton(root, text="Seleccione una opcion")
     mn = Menu(mb, tearoff=0)
-    
+
     # add the options to the Menu widget
     for option in options:
         mn.add_radiobutton(label=option.strip(), variable=variable, value=index)
         index += 1
-    
+
     # grid the Menubutton
     mb["menu"] = mn
     mb.grid(row=row, column=column, sticky=sticky)
@@ -154,16 +154,16 @@ class ReasonEntry:
     "enter a reason to avoid a monetary entry."
     msg = "Introduzca un motivo para no registrar un ingreso con esta venta:"
     completed = False
-    
+
     def __init__(self, root: Optional[Tk] = None) -> None:
         "constructor method."
         if root is None:
             self.root = Tk()
         else:
             self.root = root
-        self.root.title(msg)
+        self.root.title("Introduzca el motivo para ignorar el ingreso")
         self.prepare()
-    
+
     def prepare(self) -> None:
         "prepare the entry."
         self.reason_variable = StringVar()
@@ -191,11 +191,11 @@ class ReasonEntry:
         # and finally, a button to quit
         quit_gui = Button(frame, text="Aceptar", font=("Calibri", "14", "bold"), bg="blue",
         fg="white", command=self.root.quit).grid(row=1, column=1, sticky="ew")
-    
+
     def loop(self) -> None:
         "run self.root.mainloop() from the class."
         self.root.mainloop()
-    
+
     def is_completed(self) -> bool:
         "have we finished?"
         try:
@@ -207,7 +207,7 @@ class ReasonEntry:
             # we couldn't generate a Frame from the root, because it has been
             # destroyed. That means we have completed!
             return True
-    
+
     def get_msg(self) -> str:
         "Try to return a message."
         try:
