@@ -53,16 +53,15 @@ from typing import Optional
 # and start to build (or re-build) a ControlDeAgua distribution
 def main() -> None:
     "main function."
-    os.chdir("C:/Program Files/Control de Agua")
     try:
         print("Installing requirements...")
         subprocess.run(["python", "-m", "pip", "install", "-r", "requirements.txt"])
     except Exception as exc:
         print(f"Could not install dependecies due to a {type(exc).__name__}: {str(exc)}")
         print("Some dependencies may not be installed.")
-    if os.path.exists("build"):
+    if os.path.exists("./build"):
         # there is a previous installation, remove it
-        print("\nTrying to remove the previous installation...")
+        print("\nTrying to remove the previous installation... please wait...")
         shutil.rmtree("build")
         print("Removed any previous executable!")
 
