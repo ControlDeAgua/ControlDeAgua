@@ -2,6 +2,7 @@
 
 import getpass
 from colorama import init, Fore, Style
+from tools.pathfinders import find_our_file
 
 def main() -> None:
     try:
