@@ -39,8 +39,8 @@ if sys.platform != "win32":
 By now, we are not supporting any other implementation. If
 you really need another implementation, please contact the
 developers of this tool.""")
-if sys.version_info < (3, 6, 0):
-    sys.exit("""We don't support Python 3.5 (or older) usage.
+if sys.version_info < (3, 7, 0):
+    sys.exit("""We don't support Python 3.6 (or older).
 Please try to use a newer version.""")
 
 # now, import the libraries...

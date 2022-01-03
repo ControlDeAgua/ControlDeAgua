@@ -7,7 +7,6 @@ from typing import Optional, Tuple
 from tkinter import messagebox
 
 python_versions = [
-  (3, 6),
   (3, 7),
   (3, 8),
   (3, 9),
@@ -34,7 +33,6 @@ def identify_dir(py_name: str, exe_name: str) -> Optional[str]:
     After that, we get all the supported combinations, with Python
     versions:
 
-    - 3.6
     - 3.7
     - 3.8
     - 3.9
