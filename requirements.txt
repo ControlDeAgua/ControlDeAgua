@@ -2,7 +2,7 @@
 # are obligatory dependencies if you want to run
 # the Python distribution:
 cx_Freeze==6.9
-pillow==8.4.0
+pillow==9.0.0
 colorama==0.4.4
 
 # we need DiddiParser on the
