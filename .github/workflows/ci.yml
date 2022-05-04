@@ -3,7 +3,7 @@
 #
 # Adapted by Diego Ramirez.
 
-name: Python application tests
+name: Python CI
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
     runs-on: windows-latest # remember that ControlDeAgua is built for Windows only!
     strategy:
       matrix:
-        python-version: [ 3.7, 3.8, 3.9 ]
+        python-version: [ 3.7, 3.8, 3.9, 3.10 ]
 
     steps:
     - uses: actions/checkout@v3
@@ -32,17 +32,11 @@ jobs:
         python -m pip install --upgrade pip setuptools
         pip install flake8 
         pip install -r requirements.txt
-    #- name: DiddiParser product check
-      #run: |
-        ## use diddiparser (from requirements.txt) to retrieve product data
-        #cd .ramz
-        #python -m diddiparser ramz.diddi --is-setup
-        #cd ..
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        # The GitHub editor is 127 chars wide
+        flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
     - name: Finalize the test
       run: python -c "print('Process completed!')"
