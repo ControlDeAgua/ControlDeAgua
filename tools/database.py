@@ -41,11 +41,6 @@ def _db_route(n: str, prefix: bool = False) -> str:
     return n
 
 
-def _db_exists(pathname: str) -> bool:
-    "it just returns if the path exists or not."
-    return os.path.exists(pathname)
-
-
 def ensureDatabase(name: str) -> None:
     "get sure that the db exists. If not, create one."
     # if the db does not exists, the tables must be created.}
