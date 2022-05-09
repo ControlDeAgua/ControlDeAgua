@@ -18,32 +18,33 @@ the console (because the errors will be handled as message boxes!)
 import sys
 
 try:
-    from cx_Freeze import setup, Executable
+    from cx_Freeze import Executable, setup
 except ImportError:
     sys.exit("error: you need the cx_freeze package to run the setup() file")
 
 gui_base = None
 
-if sys.platform == "win32": gui_base = "Win32GUI"
+if sys.platform == "win32":
+    gui_base = "Win32GUI"
 
-exe = [Executable("water-gui.py",
-                  target_name="Control de Agua.exe",
-                  base=gui_base),
-       Executable("delete-db.py",
-                  target_name="Eliminar archivo SQLite.exe",
-                  base=gui_base),
-       Executable("config-gui.py",
-                  target_name="Configuracion.exe",
-                  base=gui_base),
-       Executable("admin-pwd.py",
-                  target_name="Cambiar clave de administrador.exe"),
-       Executable("manage-products.py",
-                  target_name="Manejar la informacion de producto.exe",
-                  base=gui_base)]
+exe = [
+    Executable("water-gui.py", target_name="Control de Agua.exe", base=gui_base),
+    Executable(
+        "delete-db.py", target_name="Eliminar archivo SQLite.exe", base=gui_base
+    ),
+    Executable("config-gui.py", target_name="Configuracion.exe", base=gui_base),
+    Executable("admin-pwd.py", target_name="Cambiar clave de administrador.exe"),
+    Executable(
+        "manage-products.py",
+        target_name="Manejar la informacion de producto.exe",
+        base=gui_base,
+    ),
+]
 
-setup(name="Control de Agua - MX",
-      version="1.0",  # just like a... patch?
-      description="""Esta es una aplicacion para manejar
+setup(
+    name="Control de Agua - MX",
+    version="1.0",  # just like a... patch?
+    description="""Esta es una aplicacion para manejar
 la venta de garrafones en una base de datos
 privada mediante una interfaz simple pero
 suficiente para la necesidad del usuario.
@@ -52,4 +53,5 @@ En el sitio de Configuracion, el administrador del
 negocio puede manejar las cuentas de los usuarios.
 
 Desarrollado por Diego Ramirez <dr01191115@gmail.com> (@DiddiLeija en GitHub)""",
-      executables=exe)
+    executables=exe,
+)

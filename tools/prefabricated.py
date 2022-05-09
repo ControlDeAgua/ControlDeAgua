@@ -5,7 +5,7 @@ __all__ = ("get_menubutton", "ReasonEntry")
 from tkinter import *
 
 # annotation stuff
-from typing import List, Tuple, Optional
+from typing import List, Optional, Tuple
 
 
 # Menubutton builder
@@ -15,12 +15,13 @@ def get_menubutton(
     variable: IntVar,
     row: int = 0,
     column: int = 0,
-    sticky: str = "ew"
+    sticky: str = "ew",
 ) -> Menubutton:
     """
     Generate a tkinter MenuButton. Follow a similar process than
     get_listbox().
     """
+
     def get_type(req: str) -> type:
         "function to get a type from undefined classes (I mean, defined inside a function but not imported at all)."
         if req == "dict_keys":
@@ -32,9 +33,12 @@ def get_menubutton(
         else:
             # return the type of <<None>>
             return type(None)
+
     # check some of the args (by assertion)
     if isinstance(root, Tk) and not isinstance(root, Frame):
-        messagebox.showwarning("Advertencia al desarrollador", f"""El programa ha lanzado una advertencia. Por favor
+        messagebox.showwarning(
+            "Advertencia al desarrollador",
+            f"""El programa ha lanzado una advertencia. Por favor
 reporte esto al desarrollador del producto.
 
     On 'tools.prefabicated.get_listbox', argument
@@ -47,14 +51,17 @@ reporte esto al desarrollador del producto.
 
 - Test results:
   - 'root' expected class: '_tkinter.Frame' -> 'tkinter.Frame'
-  - 'root' real class: {type(root).__name__}""")
+  - 'root' real class: {type(root).__name__}""",
+        )
     else:
         assert isinstance(root, Frame)
     try:
         assert isinstance(options, list) or isinstance(options, tuple)
     except AssertionError:
         # it might be a dict keys() or values()
-        assert isinstance(options, get_type("dict_keys")) or isinstance(options, get_type("dict_values"))
+        assert isinstance(options, get_type("dict_keys")) or isinstance(
+            options, get_type("dict_values")
+        )
     assert isinstance(row, int)
     assert isinstance(column, int)
     assert isinstance(sticky, str)

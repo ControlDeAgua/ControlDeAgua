@@ -2,16 +2,10 @@
 
 import os
 import sys
-
-from typing import Optional, Tuple
 from tkinter import messagebox
+from typing import Optional, Tuple
 
-python_versions = [
-  (3, 7),
-  (3, 8),
-  (3, 9),
-  (3, 10)
-]
+python_versions = [(3, 7), (3, 8), (3, 9), (3, 10)]
 win_platforms = ["win32", "win-amd64"]
 
 
@@ -51,13 +45,19 @@ def identify_dir(py_name: str, exe_name: str) -> Optional[str]:
     `tkinter.messagebox`. If we found a path, we return it.
     """
     found_dir = False
-    current_path = os.getcwd()[-1] if os.getcwd().endswith("/") or os.getcwd().endswith("\ ".strip()) else os.getcwd()
+    current_path = (
+        os.getcwd()[-1]
+        if os.getcwd().endswith("/") or os.getcwd().endswith("\ ".strip())
+        else os.getcwd()
+    )
     current_path = "." if current_path.split(".")[-1] not in win_platforms else "../../"
     found_path = ""
     for version in python_versions:
         formatted_version = get_str_python_version(version)
         for platform in win_platforms:
-            possible_path = f"{current_path}/build/exe.{platform}-{formatted_version}/{exe_name}"
+            possible_path = (
+                f"{current_path}/build/exe.{platform}-{formatted_version}/{exe_name}"
+            )
             if os.path.exists(possible_path):
                 found_path = possible_path
                 found_dir = True
@@ -65,8 +65,11 @@ def identify_dir(py_name: str, exe_name: str) -> Optional[str]:
 
     if not found_dir:
         if not os.path.exists(f"{current_path}/{py_name}"):
-            messagebox.showerror("Error interno", f"""Error fatal: No se pudo hallar la app {(py_name, exe_name)} en {current_path}.
-Por favor reporte esto en <https://github.com/ControlDeAgua/bug_tracker/issues>""")
+            messagebox.showerror(
+                "Error interno",
+                f"""Error fatal: No se pudo hallar la app {(py_name, exe_name)} en {current_path}.
+Por favor reporte esto en <https://github.com/ControlDeAgua/bug_tracker/issues>""",
+            )
             return None
         else:
             found_path = f"{current_path}/{py_name}"
@@ -84,11 +87,20 @@ def find_our_file(path: str, not_exists: bool = False) -> str:
         return os.path.abspath(f"../../{path}")
     else:
         if not_exists:
-            current_path = os.getcwd()[-1] if os.getcwd().endswith("/") or os.getcwd().endswith("\ ".strip()) else os.getcwd()
-            using_executable = False if current_path.split(".")[-1] not in win_platforms else True
+            current_path = (
+                os.getcwd()[-1]
+                if os.getcwd().endswith("/") or os.getcwd().endswith("\ ".strip())
+                else os.getcwd()
+            )
+            using_executable = (
+                False if current_path.split(".")[-1] not in win_platforms else True
+            )
             if using_executable:
                 return os.path.abspath(f"../../{path}")
             return os.path.abspath(f"./{path}")
-        messagebox.showerror("Error interno", f"""Error fatal: No se pudo hallar el recurso: '{path}'.
-Por favor reporte esto en <https://github.com/ControlDeAgua/bug_tracker/issues>""")
+        messagebox.showerror(
+            "Error interno",
+            f"""Error fatal: No se pudo hallar el recurso: '{path}'.
+Por favor reporte esto en <https://github.com/ControlDeAgua/bug_tracker/issues>""",
+        )
         return None

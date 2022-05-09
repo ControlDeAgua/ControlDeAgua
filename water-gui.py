@@ -15,12 +15,11 @@ __license__ = "MIT"
 # import the std libraries:
 import os
 import sys
+from os import startfile
 
 # libraries that uses "from package/module import names":
 from tkinter import *
-from tkinter import messagebox
-from tkinter import simpledialog
-from os import startfile
+from tkinter import messagebox, simpledialog
 
 # annotation stuff
 from typing import Optional
@@ -32,16 +31,18 @@ except ImportError:
     sys.exit("you need the pillow module to continue")
 
 # import my loveful toolkit (I made it by myself!)
-from tools.database import (getDatabase,
-                            deleteDatabase,
-                            ensureDatabase,
-                            buildInstertionCommand,
-                            get_product_dict,
-                            ProductMap)
-from tools.windowmanager import *
-from tools.users import UserJar, get_user_pwd
+from tools.database import (
+    ProductMap,
+    buildInstertionCommand,
+    deleteDatabase,
+    ensureDatabase,
+    get_product_dict,
+    getDatabase,
+)
 from tools.pathfinders import find_our_file
 from tools.prefabricated import *
+from tools.users import UserJar, get_user_pwd
+from tools.windowmanager import *
 
 # set some file variables
 FILE = find_our_file("db/WaterDB.sqlite", True)
@@ -80,48 +81,97 @@ class WaterGUI:
             try:
                 self.actual_odometer_read = actual_odometer.get()
             except Exception as exc:
-                messagebox.showerror("Error: Lectura no reconocida", f"""La lectura del odometro no fue reconocida correctamente.
+                messagebox.showerror(
+                    "Error: Lectura no reconocida",
+                    f"""La lectura del odometro no fue reconocida correctamente.
 Verifique e intente de nuevo.
 
 (Mensaje de error: '{str(exc)}')
-(Tipo de error: '{type(exc).__name__}')""")
+(Tipo de error: '{type(exc).__name__}')""",
+                )
                 self.goto("log-retry")
-            self.vendor = UserJar(usr_var.get(),
-                                  pwd_var.get(),
-                                  get_user_pwd(usr_var.get()),
-                                  True)
+            self.vendor = UserJar(
+                usr_var.get(), pwd_var.get(), get_user_pwd(usr_var.get()), True
+            )
             if not self.vendor.safe:
-                messagebox.showerror("Error: datos incorrectos", """Alguno de los datos introducidos fue incorrecto.
-Verifique el usuario o la contraseña e intente de nuevo.""")
+                messagebox.showerror(
+                    "Error: datos incorrectos",
+                    """Alguno de los datos introducidos fue incorrecto.
+Verifique el usuario o la contraseña e intente de nuevo.""",
+                )
                 self.goto("log-retry")
             else:
                 self.goto("door_to_home")
+
         # user prompt
-        usr_l = Label(self.door_page, text="- Introduzca nombre completo", fg="black", bg="whitesmoke",
-        font=("Calibri", "12", "bold")).grid(row=0, column=0, sticky="ew")
-        usr_prompt = Entry(self.door_page, width=40, font=("Calibri", "12", "normal"),
-        textvariable=usr_var).grid(row=0, column=1, sticky="ew")
+        usr_l = Label(
+            self.door_page,
+            text="- Introduzca nombre completo",
+            fg="black",
+            bg="whitesmoke",
+            font=("Calibri", "12", "bold"),
+        ).grid(row=0, column=0, sticky="ew")
+        usr_prompt = Entry(
+            self.door_page,
+            width=40,
+            font=("Calibri", "12", "normal"),
+            textvariable=usr_var,
+        ).grid(row=0, column=1, sticky="ew")
         # password prompt
-        pwd_l = Label(self.door_page, text="- Introduzca contraseña", fg="black", bg="whitesmoke",
-        font=("Calibri", "12", "bold")).grid(row=1, column=0, sticky="ew")
-        pwd_prompt = Entry(self.door_page, width=40, font=("Calibri", "12", "normal"),
-        textvariable=pwd_var, show="*").grid(row=1, column=1, sticky="ew")
+        pwd_l = Label(
+            self.door_page,
+            text="- Introduzca contraseña",
+            fg="black",
+            bg="whitesmoke",
+            font=("Calibri", "12", "bold"),
+        ).grid(row=1, column=0, sticky="ew")
+        pwd_prompt = Entry(
+            self.door_page,
+            width=40,
+            font=("Calibri", "12", "normal"),
+            textvariable=pwd_var,
+            show="*",
+        ).grid(row=1, column=1, sticky="ew")
         # initial odometer read
-        odometer_l = Label(self.door_page, text="- Introduzca la lectura actual del ododmetro", fg="black", bg="whitesmoke",
-        font=("Calibri", "12", "bold")).grid(row=2, column=0, sticky="ew")
-        odometer_prompt = Entry(self.door_page, width=40, font=("Calibri", "12", "normal"), textvariable=actual_odometer).grid(row=2, column=1, sticky="ew")
+        odometer_l = Label(
+            self.door_page,
+            text="- Introduzca la lectura actual del ododmetro",
+            fg="black",
+            bg="whitesmoke",
+            font=("Calibri", "12", "bold"),
+        ).grid(row=2, column=0, sticky="ew")
+        odometer_prompt = Entry(
+            self.door_page,
+            width=40,
+            font=("Calibri", "12", "normal"),
+            textvariable=actual_odometer,
+        ).grid(row=2, column=1, sticky="ew")
         # check the stored data
-        check = Button(self.door_page, text="Ingresar ahora", bg="green", fg="white", font=("Calibri", "14", "bold"),
-        command=check_user).grid(row=3, column=0, sticky="ew")
-        skip_all = Button(self.door_page, text="Cancelar y salir", bg="red", fg="white",
-        font=("Calibri", "14", "bold"), command=self.root.quit).grid(row=3, column=1, sticky="ew")
+        check = Button(
+            self.door_page,
+            text="Ingresar ahora",
+            bg="green",
+            fg="white",
+            font=("Calibri", "14", "bold"),
+            command=check_user,
+        ).grid(row=3, column=0, sticky="ew")
+        skip_all = Button(
+            self.door_page,
+            text="Cancelar y salir",
+            bg="red",
+            fg="white",
+            font=("Calibri", "14", "bold"),
+            command=self.root.quit,
+        ).grid(row=3, column=1, sticky="ew")
 
     def home_menu(self) -> None:
         "generate the welcome menu."
         # add an image logo
         if os.path.exists(find_our_file("img/home.jpg")):
             img_file = ImageTk.PhotoImage(file=find_our_file("img/home.jpg"))
-            setSize(self.root, 678, 430) # WARNING: take a look for this when inserting a new image!
+            setSize(
+                self.root, 678, 430
+            )  # WARNING: take a look for this when inserting a new image!
         else:
             # there is no home image! use a weird supply image
             img_file = ImageTk.PhotoImage(file=find_our_file("img/home-supply.jpg"))
@@ -132,14 +182,34 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
         img_label.grid(row=0, column=0)
         img_label.image = img_file
         # enter a "new", "view database" and "exit" buttons
-        addon = Button(self.home, command=lambda:self.goto("register"), text="Nuevo registro",
-        bg="whitesmoke", fg="green").grid(row=1, column=0, sticky="ew")
-        go_to_file = Button(self.home, command=self.opendb, text="Abrir base de datos (SQLite)",
-        bg="whitesmoke", fg="black").grid(row=2, column=0, sticky="ew")
-        log_again = Button(self.home, command=lambda: self.goto("log_again"), text="Cerrar sesion",
-        bg="#fff999", fg="red").grid(row=3, column=0, sticky="ew")
-        usr_name = Label(self.home, text=f"Usuario actual: {self.vendor.get(original=True)}", font=("Calibri", "12", "italic"),
-        bg="white", fg="green").grid(row=4, column=0, sticky="ew")
+        addon = Button(
+            self.home,
+            command=lambda: self.goto("register"),
+            text="Nuevo registro",
+            bg="whitesmoke",
+            fg="green",
+        ).grid(row=1, column=0, sticky="ew")
+        go_to_file = Button(
+            self.home,
+            command=self.opendb,
+            text="Abrir base de datos (SQLite)",
+            bg="whitesmoke",
+            fg="black",
+        ).grid(row=2, column=0, sticky="ew")
+        log_again = Button(
+            self.home,
+            command=lambda: self.goto("log_again"),
+            text="Cerrar sesion",
+            bg="#fff999",
+            fg="red",
+        ).grid(row=3, column=0, sticky="ew")
+        usr_name = Label(
+            self.home,
+            text=f"Usuario actual: {self.vendor.get(original=True)}",
+            font=("Calibri", "12", "italic"),
+            bg="white",
+            fg="green",
+        ).grid(row=4, column=0, sticky="ew")
 
     def register_page(self) -> None:
         "prompt to enter new things."
@@ -153,22 +223,48 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
         self.product_index = self.per_unit.get_list()
         self.unit_count = DoubleVar()
         # client prompt
-        entry_c = Label(self.rpage, text="1. Producto vendido", bg="whitesmoke", fg="black",
-        font=("Calibri", "12", "bold")).grid(row=0, column=0, sticky="ew")
-        self.client = get_menubutton(self.rpage,
-                                     self.product_index, # use a list shared by all
-                                     self.menu_selection,
-                                     row=0,
-                                     column=1)
+        entry_c = Label(
+            self.rpage,
+            text="1. Producto vendido",
+            bg="whitesmoke",
+            fg="black",
+            font=("Calibri", "12", "bold"),
+        ).grid(row=0, column=0, sticky="ew")
+        self.client = get_menubutton(
+            self.rpage,
+            self.product_index,  # use a list shared by all
+            self.menu_selection,
+            row=0,
+            column=1,
+        )
         # unit prompt
-        entry_u = Label(self.rpage, text="2. Unidades vendidas", bg="whitesmoke", fg="black",
-        font=("Calibri", "12", "bold")).grid(row=1, column=0, sticky="ew")
-        units_space = Entry(self.rpage, width=40, textvariable=self.unit_count).grid(row=1, column=1, sticky="ew")
+        entry_u = Label(
+            self.rpage,
+            text="2. Unidades vendidas",
+            bg="whitesmoke",
+            fg="black",
+            font=("Calibri", "12", "bold"),
+        ).grid(row=1, column=0, sticky="ew")
+        units_space = Entry(self.rpage, width=40, textvariable=self.unit_count).grid(
+            row=1, column=1, sticky="ew"
+        )
         # "check" and "cancel" buttons
-        check = Button(self.rpage, text="Entregar ahora", command=self.evaluate, font=("Calibri", "12", "bold"), fg="whitesmoke",
-        bg="green").grid(row=2, column=0, sticky="ew")
-        cancel = Button(self.rpage, text="Cancelar", command=self.reg_cancel, font=("Calibri", "12", "bold"), fg="whitesmoke",
-        bg="red").grid(row=2, column=1, sticky="ew")
+        check = Button(
+            self.rpage,
+            text="Entregar ahora",
+            command=self.evaluate,
+            font=("Calibri", "12", "bold"),
+            fg="whitesmoke",
+            bg="green",
+        ).grid(row=2, column=0, sticky="ew")
+        cancel = Button(
+            self.rpage,
+            text="Cancelar",
+            command=self.reg_cancel,
+            font=("Calibri", "12", "bold"),
+            fg="whitesmoke",
+            bg="red",
+        ).grid(row=2, column=1, sticky="ew")
 
     def loop(self) -> None:
         "start looping over the Tk root. Use this when the Tk is not available outside the class."
@@ -180,28 +276,36 @@ Verifique el usuario o la contraseña e intente de nuevo.""")
         try:
             index = var.get()
         except Exception as e:
-            messagebox.showerror("Parametro inadecuado", f"""En el menu desplegable de opciones, no se ha podido detectar
+            messagebox.showerror(
+                "Parametro inadecuado",
+                f"""En el menu desplegable de opciones, no se ha podido detectar
 una seleccion. Verifique e intente de nuevo.
 Si le parece haber hallado un error, reportelo a:
 
     http://github.com/ControlDeAgua/ControlDeAgua/issues/new
 
-(Error: '{str(e)}')""")
+(Error: '{str(e)}')""",
+            )
             return None
 
         # return the translated selection
         try:
             return self.product_index[index - 1]
         except Exception as e:
-            messagebox.showwarning("Error inesperado", f"""Se ha presentado un error no esperado. Por favor reportelo en
+            messagebox.showwarning(
+                "Error inesperado",
+                f"""Se ha presentado un error no esperado. Por favor reportelo en
 <http://github.com/ControlDeAgua/ControlDeAgua/issues/new>
 
-(Error: '{str(e)}')""")
+(Error: '{str(e)}')""",
+            )
             return None
 
     def no_entry(self, p: str, v: str, u: float) -> str:
         "register a sale, but not a monetary entry."
-        reason = simpledialog.askstring("Introduzca motivo", "Introduzca un motivo para omitir el ingreso:")
+        reason = simpledialog.askstring(
+            "Introduzca motivo", "Introduzca un motivo para omitir el ingreso:"
+        )
         msg = f"El producto '{p}' (cantidad: {u}) fue tomado por {v}, pero sin ingresos, por la razon: '{reason}'"
         return msg
 
@@ -211,16 +315,22 @@ Si le parece haber hallado un error, reportelo a:
         try:
             vendor = self.vendor.get()
             if len(vendor) < 1:
-                messagebox.showerror("Valores de entrada incompletos", """Parece que el programa no ha reconocido alguna entrada de texto.
+                messagebox.showerror(
+                    "Valores de entrada incompletos",
+                    """Parece que el programa no ha reconocido alguna entrada de texto.
 Revise que los datos introducidos se hallen completos e intente de nuevo.
 
-(Error reportado en consola: 'expected complete strings, but got "" (empty string)')""")
+(Error reportado en consola: 'expected complete strings, but got "" (empty string)')""",
+                )
                 return None
         except (TclError, ValueError, UnicodeError) as e:
-            messagebox.showwarning("Error reportado", f"""Parece que el programa ha rechazado alguna entrada de texto.
+            messagebox.showwarning(
+                "Error reportado",
+                f"""Parece que el programa ha rechazado alguna entrada de texto.
 Revise los datos introducidos e intente de nuevo.
 
-(Error reportado en consola: '{str(e)}')""")
+(Error reportado en consola: '{str(e)}')""",
+            )
             return None
         # get the menu selection
         product = self.analyze_menubutton(self.menu_selection, self.client)
@@ -231,35 +341,44 @@ Revise los datos introducidos e intente de nuevo.
         try:
             self.actual_odometer_read += self.per_unit.get_odometer_value(product)
         except Exception as e:
-            messagebox.showerror("Error al operar el valor del odometro", f"""Verifique e intente de nuevo.
+            messagebox.showerror(
+                "Error al operar el valor del odometro",
+                f"""Verifique e intente de nuevo.
 
-(Mensaje: {type(e).__name__}: {str(e)})""")
+(Mensaje: {type(e).__name__}: {str(e)})""",
+            )
             return None
         try:
             per_unit = self.per_unit.get(product)
             unit_count = self.unit_count.get()
         except (TclError, ValueError) as e:
-            messagebox.showwarning("Error reportado", f"""Parece que el programa ha rechazado alguna entrada numerica.
+            messagebox.showwarning(
+                "Error reportado",
+                f"""Parece que el programa ha rechazado alguna entrada numerica.
 Revise los datos introducidos e intente de nuevo.
 
-(Error reportado en consola: '{str(e)}')""")
+(Error reportado en consola: '{str(e)}')""",
+            )
             return None
         # done? redirect to self.update_db()
-        if messagebox.askyesno("¿Seguir?", """¿Desea seguir con el proceso usando las variables definidas?
-(Este proceso no se puede deshacer)"""):
-            if not messagebox.askyesno("¿Registrar cobro?", """¿Desea registrar un ingreso al negocio por el producto tomado?
+        if messagebox.askyesno(
+            "¿Seguir?",
+            """¿Desea seguir con el proceso usando las variables definidas?
+(Este proceso no se puede deshacer)""",
+        ):
+            if not messagebox.askyesno(
+                "¿Registrar cobro?",
+                """¿Desea registrar un ingreso al negocio por el producto tomado?
 
 Si no, se le va a redirigir a una pagina para
-que explique sus motivos."""):
+que explique sus motivos.""",
+            ):
                 reason = self.no_entry(product, vendor, unit_count)
             else:
                 reason = "N/A"
-            self.update_db(self.actual_odometer_read,
-                           product,
-                           vendor,
-                           per_unit,
-                           unit_count,
-                           reason)
+            self.update_db(
+                self.actual_odometer_read, product, vendor, per_unit, unit_count, reason
+            )
 
     def goto(self, target: str) -> None:
         "redirect to any point of the GUI"
@@ -281,41 +400,53 @@ que explique sus motivos."""):
 
     def reg_cancel(self) -> None:
         "cancel the registry, go back to the home page."
-        if messagebox.askyesno("¿Cancelar?", """¿Desea cancelar el registro?
-(Esto no se puede deshacer)"""):
+        if messagebox.askyesno(
+            "¿Cancelar?",
+            """¿Desea cancelar el registro?
+(Esto no se puede deshacer)""",
+        ):
             self.goto("go_home")
 
-    def update_db(self,             # this class
-                  reading: float,   # water reading
-                  client: str,      # client name
-                  vendor: str,      # vendor name
-                  per_unit: float,  # cost per unit
-                  units: float,     # units
-                  reason: str       # why aren't you giving money?
+    def update_db(
+        self,  # this class
+        reading: float,  # water reading
+        client: str,  # client name
+        vendor: str,  # vendor name
+        per_unit: float,  # cost per unit
+        units: float,  # units
+        reason: str,  # why aren't you giving money?
     ) -> None:
         "update the SQLite database and return to the home page."
         # update the SQL
         try:
-            buildInstertionCommand(DATABASE, # add the connection object to commit
-                                   CURSOR, # add the cursor to extract some stuff and execute
-                                   reading,
-                                   client,
-                                   vendor,
-                                   per_unit,
-                                   units,
-                                   reason)
+            buildInstertionCommand(
+                DATABASE,  # add the connection object to commit
+                CURSOR,  # add the cursor to extract some stuff and execute
+                reading,
+                client,
+                vendor,
+                per_unit,
+                units,
+                reason,
+            )
             # (the function above will format the arguments into a cleaner command,
             # it will run and then save the changes)
         except Exception as e:
             # something crashed, report it and cancel.
-            messagebox.showerror("Error fatal al actualizar la base de datos", f"""Los datos no fueron cargados correctamente. Intente
+            messagebox.showerror(
+                "Error fatal al actualizar la base de datos",
+                f"""Los datos no fueron cargados correctamente. Intente
 de nuevo o verifique que no haya otros programas trabajando el archivo.
 
-(Error reportado por la base de datos: '{str(e)}')""")
+(Error reportado por la base de datos: '{str(e)}')""",
+            )
             return None
         # done? go to the last step: going back to the home page
-        messagebox.showinfo("Proceso terminado exitosamente", """Los datos han sido devueltos en la base de datos.
-Puede generar un nuevo registro o salir desde el menu inicial.""")
+        messagebox.showinfo(
+            "Proceso terminado exitosamente",
+            """Los datos han sido devueltos en la base de datos.
+Puede generar un nuevo registro o salir desde el menu inicial.""",
+        )
         self.goto("go_home")
 
     def opendb(self):
@@ -323,9 +454,13 @@ Puede generar un nuevo registro o salir desde el menu inicial.""")
         try:
             startfile(find_our_file("db/WaterDB.sqlite"))
         except OSError as e:
-            messagebox.showwarning("Error al abrir archivo", f"""Hubo un error al abrir la base de datos.
+            messagebox.showwarning(
+                "Error al abrir archivo",
+                f"""Hubo un error al abrir la base de datos.
 
-(Error reportado en consola: '{str(e)}')""")
+(Error reportado en consola: '{str(e)}')""",
+            )
+
 
 # build a main() for the __main__ level
 def main() -> None:
@@ -334,6 +469,7 @@ def main() -> None:
     gui = WaterGUI(root)
     gui.loop()
 
+
 # __main__ level execution
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

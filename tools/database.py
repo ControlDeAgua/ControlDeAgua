@@ -4,17 +4,14 @@ Tools for database management.
 (specificly made for the project "Control de Agua")
 """
 
-__all__ = ["ensureDatabase",
-           "getDatabase",
-           "ProductMap",
-           "get_dates"]
+__all__ = ["ensureDatabase", "getDatabase", "ProductMap", "get_dates"]
 
 import atexit
-import os
 import json
+import os
 import sqlite3
-from tkinter import messagebox
 from datetime import datetime
+from tkinter import messagebox
 from typing import Dict, List
 
 from tools.pathfinders import find_our_file
@@ -28,11 +25,12 @@ def _destroy_db(path: str, conn: sqlite3.Connection, cursor: sqlite3.Cursor) -> 
     try:
         # try to close the SQL cursor
         cursor.close()
-        del(conn)
+        del conn
     except:
         # something happened, just pass
         pass
     atexit.register(lambda: os.remove(_db_route(path, True)))
+
 
 def _db_route(n: str, prefix: bool = False) -> str:
     "return the route with the selected prefix (or not)."
@@ -46,7 +44,8 @@ def ensureDatabase(name: str) -> None:
     # if the db does not exists, the tables must be created.}
     conn = sqlite3.connect(name)
     cur = conn.cursor()
-    cur.executescript("""
+    cur.executescript(
+        """
 CREATE TABLE IF NOT EXISTS Prompt (
     id              INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     vendor_id       INTEGER,
@@ -65,10 +64,11 @@ CREATE TABLE IF NOT EXISTS Products (
 CREATE TABLE IF NOT EXISTS Vendors (
     id       INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
     name     TEXT)
-""")
+"""
+    )
     conn.commit()
     cur.close()
-    del(cur, conn)
+    del (cur, conn)
     # log the database path
     Container.append(name)
 
@@ -83,43 +83,74 @@ def getDatabase(fname: str, use_prefix: bool = True) -> tuple:
     cur = conn.cursor()
     return conn, cur
 
+
 def deleteDatabase(p: str, c: sqlite3.Connection, cc: sqlite3.Cursor) -> None:
     "destroy the database (if you can!)"
     c.close()
     _destroy_db(p, c, cc)
 
-def buildInstertionCommand(conn, cur, read: float, client: str, vendor: str, unit_c: float, units: float, reason: str) -> None:
+
+def buildInstertionCommand(
+    conn,
+    cur,
+    read: float,
+    client: str,
+    vendor: str,
+    unit_c: float,
+    units: float,
+    reason: str,
+) -> None:
     "format and test the values to run a clean argument for execute()/executescript()."
     # calculate the cost
     try:
         total_cost = units * unit_c
     except:
-        messagebox.showwarning("Error operativo", """Algo ha sucedido al calcular el costo total.
+        messagebox.showwarning(
+            "Error operativo",
+            """Algo ha sucedido al calcular el costo total.
 Intente de nuevo o revise esas entradas. Si todo es correcto,
-favor de reportarlo en http://github.com/ControlDeAgua/ControldeAgua/issues/new""")
+favor de reportarlo en http://github.com/ControlDeAgua/ControldeAgua/issues/new""",
+        )
     # ensure and select the vendor id
-    cur.execute("""INSERT OR IGNORE INTO Vendors (name)
-        VALUES ( ? )""", (vendor, )) # add a vendor name if it doesn't exists
-    cur.execute('SELECT id FROM Vendors WHERE name = ? ', (vendor, ))
+    cur.execute(
+        """INSERT OR IGNORE INTO Vendors (name)
+        VALUES ( ? )""",
+        (vendor,),
+    )  # add a vendor name if it doesn't exists
+    cur.execute("SELECT id FROM Vendors WHERE name = ? ", (vendor,))
     vendor_id = cur.fetchone()[0]
     # do it with the client, too
-    cur.execute("""INSERT OR IGNORE INTO Products (name)
-        VALUES ( ? )""", (client, )) # add a product name, if it doesn't exists
-    cur.execute('SELECT id FROM Products WHERE name = ? ', (client, ))
+    cur.execute(
+        """INSERT OR IGNORE INTO Products (name)
+        VALUES ( ? )""",
+        (client,),
+    )  # add a product name, if it doesn't exists
+    cur.execute("SELECT id FROM Products WHERE name = ? ", (client,))
     client_id = cur.fetchone()[0]
     # update the selected data
     # (we are automattically adding a datetime,
     # as a security add-on)
-    cur.execute("""INSERT INTO Prompt
+    cur.execute(
+        """INSERT INTO Prompt
         (vendor_id, product_id, odometer_read, cost, datetime, noentry_reason) VALUES ( ?, ?, ?, ?, ?, ? )""",
-        (vendor_id, client_id, read, total_cost, datetime.today().strftime("%B %d, %Y %H:%M:%S"), reason))
+        (
+            vendor_id,
+            client_id,
+            read,
+            total_cost,
+            datetime.today().strftime("%B %d, %Y %H:%M:%S"),
+            reason,
+        ),
+    )
     conn.commit()
+
 
 def get_product_dict() -> Dict[str, float]:
     f = open(find_our_file("tools/products.json"))
     contents = json.loads(f.read())
     f.close()
     return contents
+
 
 class ProductMap:
     """
@@ -138,7 +169,9 @@ class ProductMap:
         try:
             return self.products[arg][0]
         except:
-            raise ValueError(f"Argument given by the listbox/menubutton was not found: {arg} (KeyError)")
+            raise ValueError(
+                f"Argument given by the listbox/menubutton was not found: {arg} (KeyError)"
+            )
 
     def get_odometer_value(self, arg: str) -> float:
         try:
@@ -149,6 +182,7 @@ class ProductMap:
     def get_list(self) -> List[str]:
         "list(self) method."
         return self.product_index
+
 
 def get_dates(pathname: str, use_prefix: bool = True) -> List[str]:
     "get all the datetimes from the database"

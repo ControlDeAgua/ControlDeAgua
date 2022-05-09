@@ -4,7 +4,9 @@ import sys
 
 
 def panic_msg(exc: Exception) -> None:
-    messagebox.showerror("Error fatal", f"""ERROR FATAL: Ha habido un error interno. Por favor
+    messagebox.showerror(
+        "Error fatal",
+        f"""ERROR FATAL: Ha habido un error interno. Por favor
 reportelo a los desarrolladores, dando tambien esta
 informacion adicional:
 
@@ -12,10 +14,14 @@ Info. adicional:
 
 - Tipo de error: {type(exc).__name__}
 - Mensaje de error original: {str(exc)}
-- Codigo de salida: 1""")
-    messagebox.showwarning("Salida forzada", """Se tiene que forzar la salida. Puede
+- Codigo de salida: 1""",
+    )
+    messagebox.showwarning(
+        "Salida forzada",
+        """Se tiene que forzar la salida. Puede
 que se haya perdido informacion importante, o se haya
-interrumpido un proceso en curso.""")
+interrumpido un proceso en curso.""",
+    )
     try:
         quit()
     except Exception:

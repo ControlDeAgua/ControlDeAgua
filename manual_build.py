@@ -35,17 +35,22 @@ import sys
 
 # check if the system info is supported
 if sys.platform != "win32":
-    sys.exit("""This file was intended for win32 implementations of Python.
+    sys.exit(
+        """This file was intended for win32 implementations of Python.
 By now, we are not supporting any other implementation. If
 you really need another implementation, please contact the
-developers of this tool.""")
+developers of this tool."""
+    )
 if sys.version_info < (3, 7, 0):
-    sys.exit("""We don't support Python 3.6 (or older).
-Please try to use a newer version.""")
+    sys.exit(
+        """We don't support Python 3.6 (or older).
+Please try to use a newer version."""
+    )
+
+import os
 
 # now, import the libraries...
 import shutil
-import os
 import subprocess
 from typing import Optional
 
@@ -57,7 +62,9 @@ def main() -> None:
         print("Installing requirements...")
         subprocess.run(["python", "-m", "pip", "install", "-r", "requirements.txt"])
     except Exception as exc:
-        print(f"Could not install dependecies due to a {type(exc).__name__}: {str(exc)}")
+        print(
+            f"Could not install dependecies due to a {type(exc).__name__}: {str(exc)}"
+        )
         print("Some dependencies may not be installed.")
     if os.path.exists("./build"):
         # there is a previous installation, remove it
@@ -68,9 +75,10 @@ def main() -> None:
     print(f"\nUsing cx_Freeze to build now... this could take a while...\n")
     subprocess.run(["setup.py", "build"], shell=True)
 
+
 if __name__ == "__main__":
     try:
-        main() # this could fail at any time, so get ready
+        main()  # this could fail at any time, so get ready
         sys.exit(0)
     except Exception as exc:
         sys.exit(f"FATAL: Got error while building: {str(exc)}")

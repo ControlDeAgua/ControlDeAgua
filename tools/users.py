@@ -3,14 +3,15 @@ Anything related to the security door provided to
 handle users and accounts.
 """
 
-import json
 import hashlib
-
-from tools.pathfinders import find_our_file
+import json
+import tkinter
 
 # stuff for annotations
 from typing import Optional
-import tkinter
+
+from tools.pathfinders import find_our_file
+
 
 class UserJar:
     """
@@ -21,7 +22,9 @@ class UserJar:
     methods.
     """
 
-    def __init__(self, username: str, expected_pwd: str, given_pwd: str, override: bool = False) -> None:
+    def __init__(
+        self, username: str, expected_pwd: str, given_pwd: str, override: bool = False
+    ) -> None:
         """
         Constructor method.
 
@@ -42,7 +45,9 @@ class UserJar:
         if expected_pwd.strip() != given_pwd.strip():
             if not override:
                 # you wouldn't mind to raise on console
-                raise ValueError(f"Passwords doesn't match: '{expected_pwd.strip()}' and '{given_pwd.strip()}'")
+                raise ValueError(
+                    f"Passwords doesn't match: '{expected_pwd.strip()}' and '{given_pwd.strip()}'"
+                )
             self.safe = False
 
     def get(self, original: bool = False) -> None:
@@ -53,6 +58,7 @@ class UserJar:
             return "Unverified"
         # if everything is OK, just return the user name
         return self.username if original is not True else self.legacy_user
+
 
 def get_user_pwd(usr: str) -> str:
     """
@@ -74,11 +80,15 @@ def get_user_pwd(usr: str) -> str:
     except:
         # use a cryptographic string that (obvoiusly) won't be used on
         # any kind of password!!!
-        return hashlib.sha224(b"No one's going to use this password, it must fail when used...").hexdigest()
+        return hashlib.sha224(
+            b"No one's going to use this password, it must fail when used..."
+        ).hexdigest()
+
 
 def check(var: UserJar) -> bool:
     "check the admin"
     return open(find_our_file("tools/admin.txt")).read().strip() == var.get().strip()
+
 
 def get_admin_pwd() -> Optional[str]:
     "get the current admin password. If it doesn't exists, just avoid it"

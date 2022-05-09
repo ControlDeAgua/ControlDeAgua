@@ -8,7 +8,13 @@ import argparse
 import os
 import subprocess
 
-allowed_files = ("water-gui.py", "delete-db.py", "admin-pwd.py", "manage-products.py", "config-gui.py")
+allowed_files = (
+    "water-gui.py",
+    "delete-db.py",
+    "admin-pwd.py",
+    "manage-products.py",
+    "config-gui.py",
+)
 
 
 def prepare_and_get_parser():
@@ -18,9 +24,16 @@ def prepare_and_get_parser():
     parser = argparse.ArgumentParser(prog="ControlDeAgua[development]")
     parser.add_argument("file", nargs="?", metavar="FILE")
     options = parser.parse_args()
-    if options.file is None or options.file not in allowed_files and options.file != "*":
-        parser.error(f"El archivo '{options.file}' no fue identificado como un archivo de Control de Agua, ni hubo una opcion '*'")
+    if (
+        options.file is None
+        or options.file not in allowed_files
+        and options.file != "*"
+    ):
+        parser.error(
+            f"El archivo '{options.file}' no fue identificado como un archivo de Control de Agua, ni hubo una opcion '*'"
+        )
     return parser, options.file
+
 
 def main():
     "Main function."
@@ -35,9 +48,9 @@ def main():
     for file in files:
         try:
             print(f"Running '{file}'. This could take a while.")
-            print("-"*60)
+            print("-" * 60)
             subprocess.run(file, shell=True)
-            print("-"*60)
+            print("-" * 60)
         except Exception as e:
             print(f"{type(e).__name__}: {str(e)}")
     try:
@@ -54,5 +67,6 @@ def main():
         except Exception as e:
             parser.error(f"fatal error while cleaning database: {str(e)}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
