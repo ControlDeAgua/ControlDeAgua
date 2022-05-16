@@ -1,6 +1,12 @@
-# these dependencies are used on the main code. These
+# These dependencies are used on the main code. These
 # are obligatory dependencies if you want to run
 # the Python distribution:
-cx_Freeze>=6.9
 pillow==9.1.0
 colorama==0.4.4
+
+# This is a little hack to get rid of a flake8 + cx_Freeze
+# clash, found at https://github.com/ControlDeAgua/ControlDeAgua/pull/35.
+#
+# TODO: We should get rid of this at some point...
+cx_Freeze>=6.8; python_version < "3.8"
+cx_Freeze==6.10; python_version >= "3.8"
