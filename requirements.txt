@@ -1,7 +1,6 @@
 # These dependencies are used on the main code. These
 # are obligatory dependencies if you want to run
 # the Python distribution:
-cx_Freeze==6.11.0
 pillow==9.1.1
 colorama==0.4.4
 
@@ -9,5 +8,5 @@ colorama==0.4.4
 # clash, found at https://github.com/ControlDeAgua/ControlDeAgua/pull/35.
 #
 # TODO: We should get rid of this at some point...
-cx_Freeze>=6.8; python_version < "3.8"
-cx_Freeze==6.10; python_version >= "3.8"
+cx_Freeze<=6.9; python_version < "3.8"
+cx_Freeze>=6.11; python_version >= "3.8"
