@@ -3,7 +3,7 @@
 # the Python distribution:
 cx_Freeze==6.11.0
 pillow==9.1.1
-colorama==0.4.4
+colorama==0.4.5
 
 # we need DiddiParser on the
 # GitHub workflow. We'll try to
